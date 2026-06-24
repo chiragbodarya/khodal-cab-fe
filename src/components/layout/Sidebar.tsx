@@ -12,7 +12,6 @@ import {
   LuChevronLeft,
   LuChevronRight,
   LuFileText,
-  LuZap,
 } from "react-icons/lu";
 import type { IconType } from "react-icons";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
@@ -79,32 +78,34 @@ export const Sidebar = () => {
 
   const initials = user?.name
     ? user.name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2)
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2)
     : "U";
 
   return (
     <aside
       className={`
-        relative flex flex-col h-screen bg-zinc-950 border-r border-zinc-800/80
+        relative flex flex-col h-screen bg-theme-sidebar border-r border-theme-muted
         transition-all duration-300 ease-in-out flex-shrink-0
         ${collapsed ? "w-[72px]" : "w-[240px]"}
       `}
     >
       {/* ── Logo ── */}
       <div
-        className={`flex items-center h-[72px] border-b border-zinc-800/80 px-4 flex-shrink-0
+        className={`flex items-center h-[72px] border-b border-theme-muted px-4 flex-shrink-0
           ${collapsed ? "justify-center" : "gap-3"}`}
       >
-        <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-yellow-400 flex items-center justify-center shadow-lg shadow-yellow-400/20">
-          <LuZap size={18} className="text-zinc-950" />
-        </div>
+        <img
+          src="/favicon.png"
+          alt="Balaji Travels Logo"
+          className="flex-shrink-0 w-9 h-9 object-contain rounded-xl shadow-lg shadow-yellow-400/20"
+        />
         {!collapsed && (
           <span className="text-white font-bold text-lg tracking-tight">
-            TaskFlow
+            Balaji Travels
           </span>
         )}
       </div>
@@ -113,7 +114,7 @@ export const Sidebar = () => {
       <button
         onClick={() => setCollapsed(!collapsed)}
         className="absolute -right-3.5 top-[84px] z-10 w-7 h-7 rounded-full
-          bg-zinc-900 border border-zinc-800 flex items-center justify-center
+          bg-theme-card border border-theme-muted flex items-center justify-center
           text-zinc-500 hover:text-yellow-400 hover:border-yellow-400/40
           transition-all duration-200 cursor-pointer shadow-lg"
         title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
@@ -135,7 +136,7 @@ export const Sidebar = () => {
 
       {/* ── Nav label ── */}
       {!collapsed && (
-        <p className="px-4 pt-3 pb-1.5 text-[10px] font-semibold text-zinc-600 uppercase tracking-widest flex-shrink-0">
+        <p className="px-4 pt-3 pb-1.5 text-[10px] font-semibold text-zinc-650 uppercase tracking-widest flex-shrink-0">
           Navigation
         </p>
       )}
@@ -155,11 +156,10 @@ export const Sidebar = () => {
               `relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm
                font-medium transition-all duration-200 group
                ${collapsed ? "justify-center" : ""}
-               ${
-                 isActive
-                   ? "text-yellow-400 bg-yellow-400/8"
-                   : "text-zinc-500 hover:text-white hover:bg-zinc-900"
-               }`
+               ${isActive
+                ? "text-yellow-400 bg-yellow-400/8"
+                : "text-zinc-400 hover:text-white hover:bg-zinc-900"
+              }`
             }
           >
             {({ isActive }) => (
@@ -181,7 +181,7 @@ export const Sidebar = () => {
       </nav>
 
       {/* ── Divider ── */}
-      <div className="mx-3 border-t border-zinc-800/80 flex-shrink-0" />
+      <div className="mx-3 border-t border-theme-muted flex-shrink-0" />
 
       {/* ── Bottom actions ── */}
       <div className={`py-2 space-y-0.5 flex-shrink-0 ${collapsed ? "px-2" : "px-3"}`}>
@@ -192,11 +192,10 @@ export const Sidebar = () => {
             `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
              transition-all duration-200 group
              ${collapsed ? "justify-center" : ""}
-             ${
-               isActive
-                 ? "text-yellow-400 bg-yellow-400/8"
-                 : "text-zinc-500 hover:text-white hover:bg-zinc-900"
-             }`
+             ${isActive
+              ? "text-yellow-400 bg-yellow-400/8"
+              : "text-zinc-400 hover:text-white hover:bg-zinc-900"
+            }`
           }
         >
           <LuSettings
@@ -211,7 +210,7 @@ export const Sidebar = () => {
           title={collapsed ? "Logout" : undefined}
           className={`
             w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
-            text-zinc-500 hover:text-red-400 hover:bg-red-400/5
+            text-zinc-400 hover:text-red-400 hover:bg-red-400/5
             transition-all duration-200 group cursor-pointer
             ${collapsed ? "justify-center" : ""}
           `}
@@ -226,7 +225,7 @@ export const Sidebar = () => {
 
       {/* ── User card ── */}
       {!collapsed && user && (
-        <div className="mx-3 mb-3 p-3 rounded-xl bg-zinc-900 border border-zinc-800 flex-shrink-0">
+        <div className="mx-3 mb-3 p-3 rounded-xl bg-zinc-900 border border-theme-muted flex-shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-yellow-400 flex items-center justify-center text-zinc-950 text-xs font-bold flex-shrink-0">
               {initials}

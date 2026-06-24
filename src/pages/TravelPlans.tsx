@@ -146,17 +146,17 @@ export const TravelPlans = () => {
 
       {/* ── Booking Inquiry Modal ── */}
       {showModal && selectedPlan && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-sm animate-in">
-          <div className="relative w-full max-w-lg rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-sm animate-in text-theme-primary">
+          <div className="relative w-full max-w-lg rounded-2xl bg-theme-card border border-theme-muted shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-150 dark:border-zinc-800/80">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-theme-muted">
               <div>
                 <span className="text-[10px] uppercase font-bold text-amber-500 dark:text-amber-400 tracking-wider">Submit Inquiry</span>
-                <h3 className="text-lg font-bold text-zinc-900 dark:text-white mt-0.5">{selectedPlan.title}</h3>
+                <h3 className="text-lg font-bold text-theme-primary mt-0.5">{selectedPlan.title}</h3>
               </div>
               <button
                 onClick={handleCloseInquiry}
-                className="p-1 rounded bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer"
+                className="p-1 rounded bg-theme-input hover:bg-theme-hover text-theme-secondary hover:text-theme-primary cursor-pointer transition-colors"
               >
                 <LuX size={18} />
               </button>
@@ -165,78 +165,78 @@ export const TravelPlans = () => {
             {/* Modal Body / Form */}
             <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto flex-grow text-xs">
               <div className="space-y-1">
-                <label className="block font-semibold text-zinc-605 dark:text-zinc-400">Selected Package</label>
+                <label className="block font-semibold text-theme-secondary">Selected Package</label>
                 <input
                   type="text"
                   disabled
                   value={`${selectedPlan.title} (${selectedPlan.duration})`}
-                  className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 px-3 py-2.5 rounded-xl outline-none"
+                  className="w-full bg-theme-input border border-theme-muted text-theme-muted px-3 py-2.5 rounded-xl outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="block font-semibold text-zinc-605 dark:text-zinc-400">Name *</label>
+                  <label className="block font-semibold text-theme-secondary">Name *</label>
                   <input
                     type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
                     placeholder="Enter your name"
-                    className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white px-3 py-2.5 rounded-xl outline-none focus:border-amber-400/50 transition-colors"
+                    className="w-full bg-theme-input border border-theme-muted text-theme-primary px-3 py-2.5 rounded-xl outline-none focus:border-amber-400/50 transition-colors"
                     required
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="block font-semibold text-zinc-605 dark:text-zinc-400">Phone Number *</label>
+                  <label className="block font-semibold text-theme-secondary">Phone Number *</label>
                   <input
                     type="tel"
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
                     placeholder="Enter phone number"
-                    className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white px-3 py-2.5 rounded-xl outline-none focus:border-amber-400/50 transition-colors"
+                    className="w-full bg-theme-input border border-theme-muted text-theme-primary px-3 py-2.5 rounded-xl outline-none focus:border-amber-400/50 transition-colors"
                     required
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="block font-semibold text-zinc-605 dark:text-zinc-400">Email Address *</label>
+                <label className="block font-semibold text-theme-secondary">Email Address *</label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
                   placeholder="Enter email address"
-                  className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white px-3 py-2.5 rounded-xl outline-none focus:border-amber-400/50 transition-colors"
+                  className="w-full bg-theme-input border border-theme-muted text-theme-primary px-3 py-2.5 rounded-xl outline-none focus:border-amber-400/50 transition-colors"
                   required
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="block font-semibold text-zinc-605 dark:text-zinc-400">Special Requests / Message</label>
+                <label className="block font-semibold text-theme-secondary">Special Requests / Message</label>
                 <textarea
                   name="message"
                   value={formData.message}
                   onChange={handleInputChange}
                   rows={4}
                   placeholder="Tell us about passenger count, custom dates, or any special requirements..."
-                  className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white px-3 py-2.5 rounded-xl outline-none focus:border-amber-400/50 transition-colors resize-none"
+                  className="w-full bg-theme-input border border-theme-muted text-theme-primary px-3 py-2.5 rounded-xl outline-none focus:border-amber-400/50 transition-colors resize-none"
                 />
               </div>
 
-              <div className="pt-4 border-t border-zinc-150 dark:border-zinc-800/80 flex items-center justify-end gap-3">
+              <div className="pt-4 border-t border-theme-muted flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={handleCloseInquiry}
-                  className="px-4 py-2 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 font-semibold transition-colors cursor-pointer"
+                  className="px-4 py-2 rounded-xl border border-theme-muted hover:bg-theme-input text-theme-secondary font-semibold transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-zinc-955 font-bold transition-colors cursor-pointer shadow-md"
+                  className="px-5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-zinc-950 font-bold transition-colors cursor-pointer shadow-md"
                 >
                   Submit Inquiry
                 </button>

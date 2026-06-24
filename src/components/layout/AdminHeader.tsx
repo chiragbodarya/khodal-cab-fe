@@ -28,7 +28,7 @@ export const AdminHeader = () => {
   return (
     <header className="sticky top-0 z-20 flex items-center justify-between px-6 h-[72px] bg-zinc-950/90 backdrop-blur-xl border-b border-zinc-800/80 flex-shrink-0">
       <div className="flex items-center gap-3">
-        <span className="text-zinc-400 text-sm font-medium">GoldenWay Panel</span>
+        <span className="text-zinc-400 text-sm font-medium">Balaji Travels Panel</span>
         <span className="text-zinc-600">/</span>
         <span className="text-white text-sm font-semibold">Management Console</span>
       </div>
@@ -92,7 +92,7 @@ export const AdminHeader = () => {
               {user?.name || "Admin User"}
             </p>
             <p className="text-[10px] text-zinc-500 leading-tight">
-              {user?.email || "admin@goldenway.com"}
+              {user?.email || "admin@balajitravels.com"}
             </p>
           </div>
         </div>

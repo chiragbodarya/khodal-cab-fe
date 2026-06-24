@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { LuCompass, LuMail, LuPhone, LuMapPin } from "react-icons/lu";
+import { LuMail, LuPhone, LuMapPin } from "react-icons/lu";
+import { FaWhatsapp, FaInstagram, FaFacebookF, FaXTwitter } from "react-icons/fa6";
 
 export const PublicFooter = () => {
   return (
@@ -8,17 +9,58 @@ export const PublicFooter = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand Col */}
           <div className="space-y-4">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-amber-400 flex items-center justify-center shadow-md shadow-amber-500/10">
-                <LuCompass size={18} className="text-zinc-950" />
-              </div>
+            <Link to="/" className="flex items-center gap-2.5">
+              <img 
+                src="/favicon.png" 
+                alt="Balaji Travels Logo" 
+                className="w-8 h-8 object-contain rounded-lg shadow-md shadow-amber-550/10" 
+              />
               <span className="text-white font-bold text-lg tracking-tight">
-                Golden<span className="text-amber-400">Way</span>
+                Balaji<span className="text-amber-400">Travels</span>
               </span>
             </Link>
             <p className="text-xs text-zinc-500 leading-relaxed">
               Premium travel company providing top-tier luxury buses, coaches, and mini-vans for groups, corporate tours, and family holidays.
             </p>
+            {/* Social Links */}
+            <div className="flex items-center gap-2 pt-1">
+              <a 
+                href="https://wa.me/919876543210" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800/80 flex items-center justify-center text-zinc-400 hover:text-amber-400 hover:border-amber-400/35 transition-all cursor-pointer shadow-sm"
+                title="WhatsApp"
+              >
+                <FaWhatsapp size={15} />
+              </a>
+              <a 
+                href="https://instagram.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800/80 flex items-center justify-center text-zinc-400 hover:text-amber-400 hover:border-amber-400/35 transition-all cursor-pointer shadow-sm"
+                title="Instagram"
+              >
+                <FaInstagram size={15} />
+              </a>
+              <a 
+                href="https://facebook.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800/80 flex items-center justify-center text-zinc-400 hover:text-amber-400 hover:border-amber-400/35 transition-all cursor-pointer shadow-sm"
+                title="Facebook"
+              >
+                <FaFacebookF size={13} />
+              </a>
+              <a 
+                href="https://twitter.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800/80 flex items-center justify-center text-zinc-400 hover:text-amber-400 hover:border-amber-400/35 transition-all cursor-pointer shadow-sm"
+                title="X (Twitter)"
+              >
+                <FaXTwitter size={13} />
+              </a>
+            </div>
           </div>
 
           {/* Quick Links */}
@@ -37,6 +79,9 @@ export const PublicFooter = () => {
               <li>
                 <Link to="/blogs" className="hover:text-amber-400 transition-colors">Travel Blogs</Link>
               </li>
+              <li>
+                <Link to="/contact" className="hover:text-amber-400 transition-colors">Contact Us</Link>
+              </li>
             </ul>
           </div>
 
@@ -46,7 +91,7 @@ export const PublicFooter = () => {
             <ul className="space-y-3 text-xs">
               <li className="flex items-center gap-2.5">
                 <LuMapPin size={14} className="text-amber-400 flex-shrink-0" />
-                <span>102 Golden Arcade, Tourism Sector, City Center</span>
+                <span>102 Balaji Arcade, Tourism Sector, City Center</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <LuPhone size={14} className="text-amber-400 flex-shrink-0" />
@@ -54,7 +99,7 @@ export const PublicFooter = () => {
               </li>
               <li className="flex items-center gap-2.5">
                 <LuMail size={14} className="text-amber-400 flex-shrink-0" />
-                <span>info@goldenwaytravels.com</span>
+                <span>info@balajitravels.com</span>
               </li>
             </ul>
           </div>
@@ -86,7 +131,7 @@ export const PublicFooter = () => {
         {/* Bottom */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-zinc-500">
           <div>
-            © {new Date().getFullYear()} GoldenWay Travels. All rights reserved. Built for travelers.
+            © {new Date().getFullYear()} Balaji Travels. All rights reserved. Built for travelers.
           </div>
         </div>
       </div>

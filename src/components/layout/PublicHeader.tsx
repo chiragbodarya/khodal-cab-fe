@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { LuCompass, LuMenu, LuX, LuSun, LuMoon, LuMonitor } from "react-icons/lu";
+import { LuMenu, LuX, LuSun, LuMoon, LuMonitor } from "react-icons/lu";
 import { applyTheme, getTheme, type Theme } from "../../utils/theme";
 
 export const PublicHeader = () => {
@@ -27,6 +27,7 @@ export const PublicHeader = () => {
     { name: "Our Fleet", path: "/vehicles" },
     { name: "Destinations", path: "/plans" },
     { name: "Blogs", path: "/blogs" },
+    { name: "Contact Us", path: "/contact" },
   ];
 
   return (
@@ -40,12 +41,14 @@ export const PublicHeader = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-xl bg-amber-400 flex items-center justify-center shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
-              <LuCompass size={22} className="text-zinc-950 animate-spin-slow" />
-            </div>
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <img 
+              src="/favicon.png" 
+              alt="Balaji Travels Logo" 
+              className="w-10 h-10 object-contain rounded-xl shadow-lg shadow-amber-550/10 group-hover:scale-105 transition-transform" 
+            />
             <span className="text-zinc-900 dark:text-white font-bold text-xl tracking-tight transition-colors">
-              Golden<span className="text-amber-400">Way</span> Travels
+              Balaji <span className="text-amber-400">Travels</span>
             </span>
           </Link>
 

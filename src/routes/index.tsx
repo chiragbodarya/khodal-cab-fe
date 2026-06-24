@@ -4,6 +4,7 @@ import { Home } from "../pages/Home";
 import { Vehicles } from "../pages/Vehicles";
 import { TravelPlans } from "../pages/TravelPlans";
 import { Blogs } from "../pages/Blogs";
+import { Contact } from "../pages/Contact";
 import { AdminLogin } from "../pages/AdminLogin";
 import { Dashboard as AdminDashboard } from "../pages/admin/Dashboard";
 import { ManageFleet } from "../pages/admin/ManageFleet";
@@ -30,6 +31,10 @@ export const router = createBrowserRouter([
       {
         path: "/blogs",
         element: <Blogs />,
+      },
+      {
+        path: "/contact",
+        element: <Contact />,
       },
       {
         path: "/backstage/login",

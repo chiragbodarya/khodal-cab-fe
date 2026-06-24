@@ -1,5 +1,76 @@
 @import "tailwindcss";
 
+@variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg-app: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-header: rgba(255, 255, 255, 0.9);
+  --bg-sidebar: #0f172a;
+  --bg-input: #f1f5f9;
+  --bg-hover: #f1f5f9;
+  
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  
+  --border-color: #cbd5e1;
+  --border-muted: #e2e8f0;
+}
+
+html.dark {
+  --bg-app: #020617;
+  --bg-card: #0f172a;
+  --bg-header: rgba(15, 23, 42, 0.9);
+  --bg-sidebar: #020617;
+  --bg-input: #1e293b;
+  --bg-hover: #1e293b;
+  
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  
+  --border-color: #1e293b;
+  --border-muted: #334155;
+}
+
+/* Common Classes using variables */
+.bg-theme-app {
+  background-color: var(--bg-app);
+}
+.bg-theme-card {
+  background-color: var(--bg-card);
+}
+.bg-theme-header {
+  background-color: var(--bg-header);
+}
+.bg-theme-sidebar {
+  background-color: var(--bg-sidebar);
+}
+.bg-theme-input {
+  background-color: var(--bg-input);
+}
+.bg-theme-hover:hover {
+  background-color: var(--bg-hover);
+}
+
+.text-theme-primary {
+  color: var(--text-primary);
+}
+.text-theme-secondary {
+  color: var(--text-secondary);
+}
+.text-theme-muted {
+  color: var(--text-muted);
+}
+
+.border-theme-primary {
+  border-color: var(--border-color);
+}
+.border-theme-muted {
+  border-color: var(--border-muted);
+}
+
 /* Custom scrollbar for webkit browsers */
 ::-webkit-scrollbar {
   width: 6px;
@@ -39,12 +110,7 @@ html, body, #root {
   margin: 0;
   padding: 0;
   font-family: "Inter", "Segoe UI", system-ui, sans-serif;
-  background-color: #f8fafc; /* slate-50 (light mode) */
-  color: #0f172a; /* slate-900 (light mode) */
+  background-color: var(--bg-app);
+  color: var(--text-primary);
   transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-html.dark, html.dark body, html.dark #root {
-  background-color: #020617; /* slate-950 (dark mode) */
-  color: #f1f5f9; /* slate-100 (dark mode) */
 }

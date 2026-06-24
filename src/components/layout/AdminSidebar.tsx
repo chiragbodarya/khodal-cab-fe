@@ -8,7 +8,6 @@ import {
   LuLogOut,
   LuChevronLeft,
   LuChevronRight,
-  LuCompass,
   LuArrowLeft,
 } from "react-icons/lu";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
@@ -54,12 +53,14 @@ export const AdminSidebar = () => {
         className={`flex items-center h-[72px] border-b border-zinc-800/80 px-4 flex-shrink-0
           ${collapsed ? "justify-center" : "gap-3"}`}
       >
-        <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-amber-400 flex items-center justify-center shadow-lg shadow-amber-400/20">
-          <LuCompass size={18} className="text-zinc-950 animate-spin-slow" />
-        </div>
+        <img 
+          src="/favicon.png" 
+          alt="Balaji Travels Logo" 
+          className="flex-shrink-0 w-9 h-9 object-contain rounded-xl shadow-lg shadow-amber-400/20" 
+        />
         {!collapsed && (
           <span className="text-white font-bold text-base tracking-tight">
-            Golden<span className="text-amber-400">Way</span> Admin
+            Balaji <span className="text-amber-400">Travels</span> Admin
           </span>
         )}
       </div>

@@ -4,7 +4,7 @@ import { Header } from "./Header";
 
 export const Layout = () => {
   return (
-    <div className="flex h-screen w-full bg-slate-950 overflow-hidden">
+    <div className="flex h-screen w-full bg-theme-app overflow-hidden text-theme-primary transition-colors duration-200">
       {/* Sidebar */}
       <Sidebar />
 

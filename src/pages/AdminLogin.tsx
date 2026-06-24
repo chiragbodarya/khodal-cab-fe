@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { login } from "../redux/slices/authSlice";
-import { LuCompass, LuLock, LuMail, LuArrowLeft } from "react-icons/lu";
+import { LuLock, LuMail, LuArrowLeft } from "react-icons/lu";
 import toast from "react-hot-toast";
 
 export const AdminLogin = () => {
-  const [email, setEmail] = useState("admin@goldenway.com");
+  const [email, setEmail] = useState("admin@balajitravels.com");
   const [password, setPassword] = useState("admin123");
   const [loading, setLoading] = useState(false);
 
@@ -27,12 +27,12 @@ export const AdminLogin = () => {
 
     // Simple mock auth validation
     setTimeout(() => {
-      if (email === "admin@goldenway.com" && password === "admin123") {
+      if (email === "admin@balajitravels.com" && password === "admin123") {
         dispatch(
           login({
             id: "admin_01",
             name: "Rajesh Kumar",
-            email: "admin@goldenway.com",
+            email: "admin@balajitravels.com",
             role: "admin",
             avatar: "",
           })
@@ -62,9 +62,11 @@ export const AdminLogin = () => {
 
         {/* Brand */}
         <div className="flex flex-col items-center space-y-2">
-          <div className="w-12 h-12 rounded-2xl bg-amber-400 flex items-center justify-center shadow-lg shadow-amber-500/20">
-            <LuCompass size={24} className="text-zinc-950 animate-spin-slow" />
-          </div>
+          <img
+            src="/favicon.png"
+            alt="Balaji Travels Logo"
+            className="w-12 h-12 object-contain rounded-2xl shadow-lg shadow-amber-500/20"
+          />
           <h2 className="text-xl font-bold text-white text-center">
             Admin Management Console
           </h2>
@@ -83,7 +85,7 @@ export const AdminLogin = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@goldenway.com"
+                placeholder="admin@balajitravels.com"
                 className="w-full bg-zinc-950 border border-zinc-800 text-white text-xs pl-10 pr-4 py-3.5 rounded-xl outline-none focus:border-amber-400/50 transition-colors"
                 required
               />
@@ -108,7 +110,7 @@ export const AdminLogin = () => {
           {/* Demo Credentials Alert */}
           <div className="p-3.5 rounded-xl bg-amber-400/5 border border-amber-400/10 text-[11px] text-amber-300/80 leading-relaxed font-light">
             <strong>Demo Credentials:</strong> <br />
-            Email: <code className="text-white">admin@goldenway.com</code> <br />
+            Email: <code className="text-white">admin@balajitravels.com</code> <br />
             Password: <code className="text-white">admin123</code>
           </div>
 

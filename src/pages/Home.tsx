@@ -36,7 +36,7 @@ export const Home = () => {
           </div>
           <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight leading-none">
             Travel in Luxury. <br />
-            Explore with <span className="text-amber-400">GoldenWay</span>
+            Explore with <span className="text-amber-400">Balaji Travels</span>
           </h1>
           <p className="text-base sm:text-lg text-zinc-200 max-w-2xl mx-auto font-light leading-relaxed">
             Premium travel services with a world-class fleet of luxury buses, coaches, and customizable packages to make every journey memorable.
