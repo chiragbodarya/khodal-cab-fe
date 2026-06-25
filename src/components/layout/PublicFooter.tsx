@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { LuMail, LuPhone, LuMapPin } from "react-icons/lu";
 import { FaWhatsapp, FaInstagram, FaFacebookF, FaXTwitter } from "react-icons/fa6";
+import { COMPANY_DETAILS } from "../../utils/constants";
 
 export const PublicFooter = () => {
   return (
@@ -12,11 +13,11 @@ export const PublicFooter = () => {
             <Link to="/" className="flex items-center gap-2.5">
               <img 
                 src="/favicon.png" 
-                alt="Balaji Travels Logo" 
+                alt="Khodel Travels Logo" 
                 className="w-8 h-8 object-contain rounded-lg shadow-md shadow-amber-550/10" 
               />
               <span className="text-white font-bold text-lg tracking-tight">
-                Balaji<span className="text-amber-400">Travels</span>
+                Khodel<span className="text-amber-400">Travels</span>
               </span>
             </Link>
             <p className="text-xs text-zinc-500 leading-relaxed">
@@ -25,7 +26,7 @@ export const PublicFooter = () => {
             {/* Social Links */}
             <div className="flex items-center gap-2 pt-1">
               <a 
-                href="https://wa.me/919876543210" 
+                href={`https://wa.me/${COMPANY_DETAILS.phoneCab.replace(/[^0-9]/g, "")}`} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800/80 flex items-center justify-center text-zinc-400 hover:text-amber-400 hover:border-amber-400/35 transition-all cursor-pointer shadow-sm"
@@ -80,6 +81,9 @@ export const PublicFooter = () => {
                 <Link to="/blogs" className="hover:text-amber-400 transition-colors">Travel Blogs</Link>
               </li>
               <li>
+                <Link to="/gallery" className="hover:text-amber-400 transition-colors">Photo Gallery</Link>
+              </li>
+              <li>
                 <Link to="/contact" className="hover:text-amber-400 transition-colors">Contact Us</Link>
               </li>
             </ul>
@@ -91,15 +95,15 @@ export const PublicFooter = () => {
             <ul className="space-y-3 text-xs">
               <li className="flex items-center gap-2.5">
                 <LuMapPin size={14} className="text-amber-400 flex-shrink-0" />
-                <span>102 Balaji Arcade, Tourism Sector, City Center</span>
+                <span>{COMPANY_DETAILS.address}</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <LuPhone size={14} className="text-amber-400 flex-shrink-0" />
-                <span>+91 98765 43210</span>
+                <span>{COMPANY_DETAILS.phoneCab}</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <LuMail size={14} className="text-amber-400 flex-shrink-0" />
-                <span>info@balajitravels.com</span>
+                <span>{COMPANY_DETAILS.emailInfo}</span>
               </li>
             </ul>
           </div>
@@ -117,7 +121,7 @@ export const PublicFooter = () => {
               />
               <button
                 type="submit"
-                className="bg-amber-400 hover:bg-amber-300 text-zinc-950 text-xs font-semibold px-4 py-2 rounded-lg transition-colors cursor-pointer"
+                className="bg-amber-400 hover:bg-amber-300 text-zinc-955 text-xs font-semibold px-4 py-2 rounded-lg transition-colors cursor-pointer"
               >
                 Join
               </button>
@@ -131,7 +135,7 @@ export const PublicFooter = () => {
         {/* Bottom */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-zinc-500">
           <div>
-            © {new Date().getFullYear()} Balaji Travels. All rights reserved. Built for travelers.
+            © {new Date().getFullYear()} Khodel Travels. All rights reserved. Built for travelers.
           </div>
         </div>
       </div>

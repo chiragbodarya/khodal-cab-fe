@@ -27,6 +27,7 @@ export const PublicHeader = () => {
     { name: "Our Fleet", path: "/vehicles" },
     { name: "Destinations", path: "/plans" },
     { name: "Blogs", path: "/blogs" },
+    { name: "Gallery", path: "/gallery" },
     { name: "Contact Us", path: "/contact" },
   ];
 
@@ -44,11 +45,11 @@ export const PublicHeader = () => {
           <Link to="/" className="flex items-center gap-2.5 group">
             <img 
               src="/favicon.png" 
-              alt="Balaji Travels Logo" 
-              className="w-10 h-10 object-contain rounded-xl shadow-lg shadow-amber-550/10 group-hover:scale-105 transition-transform" 
+              alt="Khodel Travels Logo" 
+              className="w-10 h-10 object-contain rounded-xl shadow-lg shadow-amber-555/10 group-hover:scale-105 transition-transform" 
             />
             <span className="text-zinc-900 dark:text-white font-bold text-xl tracking-tight transition-colors">
-              Balaji <span className="text-amber-400">Travels</span>
+              Khodel <span className="text-amber-400">Travels</span>
             </span>
           </Link>
 

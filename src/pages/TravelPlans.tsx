@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import { getPlans, getInquiries, saveInquiries, type TravelPlan, type Inquiry } from "../utils/storage";
-import { LuClock, LuCheck, LuMapPin, LuInfo, LuX } from "react-icons/lu";
+import { LuClock, LuCheck, LuMapPin, LuInfo, LuX, LuCar } from "react-icons/lu";
 import toast from "react-hot-toast";
+
+import { CAB_PLANS } from "../utils/constants";
 
 export const TravelPlans = () => {
   const [plans, setPlans] = useState<TravelPlan[]>([]);
   const [selectedPlan, setSelectedPlan] = useState<TravelPlan | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [activeTab, setActiveTab] = useState<"tours" | "cabs">("tours");
 
   // Form State
   const [formData, setFormData] = useState({
@@ -66,16 +69,48 @@ export const TravelPlans = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 animate-in">
       {/* Header */}
       <div className="text-center space-y-3">
-        <h1 className="text-3xl sm:text-5xl font-black text-zinc-900 dark:text-white">Tour Packages</h1>
+        <h1 className="text-3xl sm:text-5xl font-black text-zinc-900 dark:text-white">
+          {activeTab === "tours" ? "Tour Packages" : "Cab Trip Plans"}
+        </h1>
         <p className="text-zinc-550 dark:text-zinc-400 text-sm max-w-xl mx-auto font-light">
-          Handpicked premium holiday packages, tailored for absolute comfort and unforgettable travel experiences.
+          {activeTab === "tours"
+            ? "Handpicked premium holiday packages, tailored for absolute comfort and unforgettable travel experiences."
+            : "Direct cab routes and custom travel options with professional drivers. Slogan: ટ્રીપ તમારી કાર અમારી (Trip Tamari, Car Amari)."}
         </p>
         <div className="w-16 h-1 bg-amber-400 mx-auto rounded-full mt-4" />
       </div>
 
+      {/* Tab Switcher */}
+      <div className="flex justify-center">
+        <div className="inline-flex p-1 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-inner">
+          <button
+            type="button"
+            onClick={() => setActiveTab("tours")}
+            className={`px-6 py-2.5 rounded-xl font-bold text-xs transition-all duration-200 cursor-pointer ${
+              activeTab === "tours"
+                ? "bg-amber-400 text-zinc-950 shadow-md"
+                : "text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
+            }`}
+          >
+            Tour Packages
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("cabs")}
+            className={`px-6 py-2.5 rounded-xl font-bold text-xs transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+              activeTab === "cabs"
+                ? "bg-amber-400 text-zinc-950 shadow-md"
+                : "text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
+            }`}
+          >
+            <LuCar size={14} /> Cab Trip Plans
+          </button>
+        </div>
+      </div>
+
       {/* Plans List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {plans.map((plan) => (
+        {(activeTab === "tours" ? plans : CAB_PLANS).map((plan) => (
           <div
             key={plan.id}
             className="group rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800/85 overflow-hidden hover:border-amber-400/30 transition-all flex flex-col h-full shadow-md dark:shadow-lg"
@@ -112,8 +147,8 @@ export const TravelPlans = () => {
 
                 {/* Highlights */}
                 <div className="space-y-1.5 pt-2">
-                  <span className="text-[10px] uppercase font-bold text-zinc-550 dark:text-zinc-500 tracking-wider flex items-center gap-1">
-                    <LuInfo size={11} className="text-amber-400" /> Package Highlights
+                  <span className="text-[10px] uppercase font-bold text-zinc-555 dark:text-zinc-500 tracking-wider flex items-center gap-1">
+                    <LuInfo size={11} className="text-amber-400" /> {activeTab === "tours" ? "Package Highlights" : "Service Highlights"}
                   </span>
                   <div className="grid grid-cols-1 gap-1">
                     {plan.highlights.slice(0, 3).map((item, idx) => (
@@ -129,12 +164,15 @@ export const TravelPlans = () => {
               {/* Price and Action */}
               <div className="pt-4 border-t border-zinc-150 dark:border-zinc-800 flex items-center justify-between">
                 <div>
-                  <span className="text-zinc-550 dark:text-zinc-500 text-[10px] uppercase tracking-wider block font-semibold">Price Per Person</span>
+                  <span className="text-zinc-555 dark:text-zinc-500 text-[10px] uppercase tracking-wider block font-semibold">
+                    {activeTab === "tours" ? "Price Per Person" : "Price Starts At"}
+                  </span>
                   <span className="text-lg font-bold text-zinc-900 dark:text-white">₹{plan.price.toLocaleString("en-IN")}</span>
                 </div>
                 <button
+                  type="button"
                   onClick={() => handleOpenInquiry(plan)}
-                  className="px-4 py-2.5 rounded-xl bg-amber-400 text-zinc-950 font-bold text-xs hover:bg-amber-300 transition-all cursor-pointer shadow-lg shadow-amber-400/10"
+                  className="px-4 py-2.5 rounded-xl bg-amber-400 text-zinc-955 font-bold text-xs hover:bg-amber-300 transition-all cursor-pointer shadow-lg shadow-amber-400/10"
                 >
                   Book / Enquire
                 </button>

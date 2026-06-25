@@ -6,7 +6,7 @@ import { LuLock, LuMail, LuArrowLeft } from "react-icons/lu";
 import toast from "react-hot-toast";
 
 export const AdminLogin = () => {
-  const [email, setEmail] = useState("admin@balajitravels.com");
+  const [email, setEmail] = useState("admin@khodeltravels.com");
   const [password, setPassword] = useState("admin123");
   const [loading, setLoading] = useState(false);
 
@@ -27,12 +27,12 @@ export const AdminLogin = () => {
 
     // Simple mock auth validation
     setTimeout(() => {
-      if (email === "admin@balajitravels.com" && password === "admin123") {
+      if (email === "admin@khodeltravels.com" && password === "admin123") {
         dispatch(
           login({
             id: "admin_01",
             name: "Rajesh Kumar",
-            email: "admin@balajitravels.com",
+            email: "admin@khodeltravels.com",
             role: "admin",
             avatar: "",
           })
@@ -64,7 +64,7 @@ export const AdminLogin = () => {
         <div className="flex flex-col items-center space-y-2">
           <img
             src="/favicon.png"
-            alt="Balaji Travels Logo"
+            alt="Khodel Travels Logo"
             className="w-12 h-12 object-contain rounded-2xl shadow-lg shadow-amber-500/20"
           />
           <h2 className="text-xl font-bold text-white text-center">
@@ -85,8 +85,8 @@ export const AdminLogin = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@balajitravels.com"
-                className="w-full bg-zinc-950 border border-zinc-800 text-white text-xs pl-10 pr-4 py-3.5 rounded-xl outline-none focus:border-amber-400/50 transition-colors"
+                placeholder="admin@khodeltravels.com"
+                className="w-full bg-zinc-955 border border-zinc-800 text-white text-xs pl-10 pr-4 py-3.5 rounded-xl outline-none focus:border-amber-400/50 transition-colors"
                 required
               />
             </div>
@@ -101,7 +101,7 @@ export const AdminLogin = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-zinc-950 border border-zinc-800 text-white text-xs pl-10 pr-4 py-3.5 rounded-xl outline-none focus:border-amber-400/50 transition-colors"
+                className="w-full bg-zinc-955 border border-zinc-800 text-white text-xs pl-10 pr-4 py-3.5 rounded-xl outline-none focus:border-amber-400/50 transition-colors"
                 required
               />
             </div>
@@ -110,7 +110,7 @@ export const AdminLogin = () => {
           {/* Demo Credentials Alert */}
           <div className="p-3.5 rounded-xl bg-amber-400/5 border border-amber-400/10 text-[11px] text-amber-300/80 leading-relaxed font-light">
             <strong>Demo Credentials:</strong> <br />
-            Email: <code className="text-white">admin@balajitravels.com</code> <br />
+            Email: <code className="text-white">admin@khodeltravels.com</code> <br />
             Password: <code className="text-white">admin123</code>
           </div>
 

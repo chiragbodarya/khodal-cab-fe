@@ -100,12 +100,12 @@ export const Sidebar = () => {
       >
         <img
           src="/favicon.png"
-          alt="Balaji Travels Logo"
+          alt="Khodel Travels Logo"
           className="flex-shrink-0 w-9 h-9 object-contain rounded-xl shadow-lg shadow-yellow-400/20"
         />
         {!collapsed && (
           <span className="text-white font-bold text-lg tracking-tight">
-            Balaji Travels
+            Khodel Travels
           </span>
         )}
       </div>
