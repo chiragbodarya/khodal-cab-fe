@@ -2,6 +2,7 @@ import { useState } from "react";
 import { getInquiries, saveInquiries, type Inquiry } from "../utils/storage";
 import { LuMail, LuPhone, LuMapPin, LuSend, LuClock } from "react-icons/lu";
 import toast from "react-hot-toast";
+import { COMPANY_DETAILS } from "../utils/constants";
 
 export const Contact = () => {
   const [formData, setFormData] = useState({
@@ -52,7 +53,7 @@ export const Contact = () => {
       <div className="text-center space-y-3">
         <h1 className="text-3xl sm:text-5xl font-black">Contact Us</h1>
         <p className="text-theme-secondary text-sm max-w-xl mx-auto font-light">
-          Have queries about tour bookings, customizable charters, or vehicle availability? Reach out to Balaji Travels.
+          Have queries about tour bookings, customizable charters, or vehicle availability? Reach out to {COMPANY_DETAILS.name}.
         </p>
         <div className="w-16 h-1 bg-amber-400 mx-auto rounded-full mt-4" />
       </div>
@@ -67,33 +68,33 @@ export const Contact = () => {
             <div>
               <h3 className="font-bold text-base mb-1">Our Head Office</h3>
               <p className="text-theme-secondary text-xs font-light leading-relaxed">
-                102 Balaji Arcade, Tourism Sector, City Center, India
+                {COMPANY_DETAILS.address}
               </p>
             </div>
           </div>
 
           <div className="p-6 rounded-2xl bg-theme-card border border-theme-muted flex gap-4 items-start shadow-sm">
-            <div className="w-12 h-12 rounded-xl bg-amber-450/10 text-amber-400 flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-amber-455/10 text-amber-400 flex items-center justify-center flex-shrink-0">
               <LuPhone size={22} />
             </div>
             <div>
               <h3 className="font-bold text-base mb-1">Call Booking Desk</h3>
               <p className="text-theme-secondary text-xs font-light leading-relaxed">
-                +91 98765 43210 <br />
-                <span className="text-[10px] text-theme-muted">Toll Free: 1800 123 4567</span>
+                {COMPANY_DETAILS.phoneCab} (Cab Bookings) <br />
+                <span className="text-[10px] text-theme-muted">Support/Tours: {COMPANY_DETAILS.phoneTours}</span>
               </p>
             </div>
           </div>
 
           <div className="p-6 rounded-2xl bg-theme-card border border-theme-muted flex gap-4 items-start shadow-sm">
-            <div className="w-12 h-12 rounded-xl bg-amber-450/10 text-amber-400 flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-amber-455/10 text-amber-400 flex items-center justify-center flex-shrink-0">
               <LuMail size={22} />
             </div>
             <div>
               <h3 className="font-bold text-base mb-1">Email Queries</h3>
               <p className="text-theme-secondary text-xs font-light leading-relaxed">
-                info@balajitravels.com <br />
-                <span className="text-[10px] text-theme-muted">support@balajitravels.com</span>
+                {COMPANY_DETAILS.emailInfo} <br />
+                <span className="text-[10px] text-theme-muted">{COMPANY_DETAILS.emailSupport}</span>
               </p>
             </div>
           </div>

@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getPlans, getVehicles, getBlogs, type TravelPlan, type Vehicle, type Blog } from "../utils/storage";
-import { LuCompass, LuArrowRight, LuShield, LuCalendar, LuAward, LuBus } from "react-icons/lu";
+import { LuCompass, LuArrowRight, LuShield, LuCalendar, LuAward, LuBus, LuCar, LuCheck, LuPhoneCall } from "react-icons/lu";
+import { COMPANY_DETAILS, CAB_FLEET, CAB_ROUTES, CAB_SERVICES } from "../utils/constants";
 
 export const Home = () => {
   const [featuredPlans, setFeaturedPlans] = useState<TravelPlan[]>([]);
@@ -36,7 +37,7 @@ export const Home = () => {
           </div>
           <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight leading-none">
             Travel in Luxury. <br />
-            Explore with <span className="text-amber-400">Balaji Travels</span>
+            Explore with <span className="text-amber-400">Khodel Travels</span>
           </h1>
           <p className="text-base sm:text-lg text-zinc-200 max-w-2xl mx-auto font-light leading-relaxed">
             Premium travel services with a world-class fleet of luxury buses, coaches, and customizable packages to make every journey memorable.
@@ -217,6 +218,91 @@ export const Home = () => {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Cab Services Section ── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-400 text-xs font-semibold tracking-wider uppercase">
+              <LuCar size={13} /> {COMPANY_DETAILS.name.split(" ")[0]} Cab
+            </div>
+            <h2 className="text-3xl font-black text-zinc-900 dark:text-white">Premium Cab Services</h2>
+            <p className="text-zinc-555 dark:text-zinc-400 text-sm font-semibold italic text-amber-500">
+              "{COMPANY_DETAILS.slogan}" ({COMPANY_DETAILS.sloganEnglish})
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <a
+              href={`tel:${COMPANY_DETAILS.phoneCab.replace(/\s+/g, "")}`}
+              className="px-5 py-2.5 rounded-xl bg-amber-400 text-zinc-955 font-bold hover:bg-amber-300 transition-all flex items-center gap-2 text-sm shadow-md shadow-amber-400/10 cursor-pointer"
+            >
+              <LuPhoneCall size={16} /> Call {COMPANY_DETAILS.phoneCab}
+            </a>
+            <a
+              href={`https://wa.me/${COMPANY_DETAILS.phoneCab.replace(/[^0-9]/g, "")}?text=Hello%20${COMPANY_DETAILS.name.split(" ")[0]}%20Cab,%20I%2520want%2520to%2520book%2520a%2520cab`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-amber-400/35 hover:text-amber-400 dark:text-white transition-all flex items-center gap-2 text-sm backdrop-blur-sm bg-white/5 cursor-pointer"
+            >
+              Chat on WhatsApp
+            </a>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Routes Card */}
+          <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800/80 space-y-5 shadow-sm dark:shadow-none">
+            <h3 className="font-bold text-lg text-zinc-900 dark:text-white flex items-center gap-2 border-b border-zinc-100 dark:border-zinc-800 pb-3">
+              <span className="w-1.5 h-6 rounded-full bg-amber-400 block" /> Popular Cab Routes
+            </h3>
+            <ul className="space-y-4 text-sm">
+              {CAB_ROUTES.map((route, i) => (
+                <li key={i} className="flex items-center justify-between p-3 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800">
+                  <span className="font-semibold text-zinc-800 dark:text-zinc-200">{route.from}</span>
+                  <span className="text-amber-400 font-bold px-2">➔</span>
+                  <span className={`font-semibold ${route.special ? "text-amber-400" : "text-zinc-800 dark:text-zinc-200"}`}>{route.to}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Vehicles Card */}
+          <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800/80 space-y-5 shadow-sm dark:shadow-none">
+            <h3 className="font-bold text-lg text-zinc-900 dark:text-white flex items-center gap-2 border-b border-zinc-100 dark:border-zinc-800 pb-3">
+              <span className="w-1.5 h-6 rounded-full bg-amber-400 block" /> Available Cab Fleet
+            </h3>
+            <div className="grid grid-cols-2 gap-3">
+              {CAB_FLEET.map((car, i) => (
+                <div key={i} className="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 space-y-1 text-center hover:border-amber-400/30 transition-all">
+                  <span className="block text-[11px] font-bold text-amber-500 dark:text-amber-400 uppercase">{car.name}</span>
+                  <span className="block text-[10px] text-zinc-500 dark:text-zinc-400 font-light truncate">{car.desc}</span>
+                  <span className="inline-block text-[9px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold mt-1">{car.capacity}</span>
+                </div>
+              ))}
+            </div>
+            <div className="p-3 rounded-xl bg-amber-400/5 border border-amber-400/10 text-xs text-zinc-650 dark:text-zinc-450 text-center font-light leading-relaxed">
+              All vehicles are fully air-conditioned, professionally sanitized, and operated by experienced highway drivers.
+            </div>
+          </div>
+
+          {/* Service Types Card */}
+          <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800/80 space-y-5 shadow-sm dark:shadow-none">
+            <h3 className="font-bold text-lg text-zinc-900 dark:text-white flex items-center gap-2 border-b border-zinc-100 dark:border-zinc-800 pb-3">
+              <span className="w-1.5 h-6 rounded-full bg-amber-400 block" /> Our Booking Services
+            </h3>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2.5">
+              {CAB_SERVICES.map((srv, i) => (
+                <li key={i} className="flex items-center gap-2.5 text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                  <span className="w-5 h-5 rounded-full bg-amber-400/10 text-amber-400 flex items-center justify-center flex-shrink-0">
+                    <LuCheck size={12} />
+                  </span>
+                  <span>{srv}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>

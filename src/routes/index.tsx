@@ -5,6 +5,7 @@ import { Vehicles } from "../pages/Vehicles";
 import { TravelPlans } from "../pages/TravelPlans";
 import { Blogs } from "../pages/Blogs";
 import { Contact } from "../pages/Contact";
+import { Gallery } from "../pages/Gallery";
 import { AdminLogin } from "../pages/AdminLogin";
 import { Dashboard as AdminDashboard } from "../pages/admin/Dashboard";
 import { ManageFleet } from "../pages/admin/ManageFleet";
@@ -35,6 +36,10 @@ export const router = createBrowserRouter([
       {
         path: "/contact",
         element: <Contact />,
+      },
+      {
+        path: "/gallery",
+        element: <Gallery />,
       },
       {
         path: "/backstage/login",

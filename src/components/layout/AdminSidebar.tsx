@@ -55,12 +55,12 @@ export const AdminSidebar = () => {
       >
         <img 
           src="/favicon.png" 
-          alt="Balaji Travels Logo" 
+          alt="Khodel Travels Logo" 
           className="flex-shrink-0 w-9 h-9 object-contain rounded-xl shadow-lg shadow-amber-400/20" 
         />
         {!collapsed && (
           <span className="text-white font-bold text-base tracking-tight">
-            Balaji <span className="text-amber-400">Travels</span> Admin
+            Khodel <span className="text-amber-400">Travels</span> Admin
           </span>
         )}
       </div>
