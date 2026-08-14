@@ -1,25 +1,20 @@
-import { useNavigate } from "react-router-dom";
-import { LuArrowLeft } from "react-icons/lu";
+import { useNavigate } from 'react-router-dom';
+import { LuArrowLeft } from 'react-icons/lu';
 
 export const NotFound = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4">
-      <div className="text-center max-w-sm">
-        <p className="text-8xl font-black text-yellow-400 mb-4 leading-none">
-          404
-        </p>
-        <h1 className="text-2xl font-bold text-white mb-2">Page not found</h1>
-        <p className="text-zinc-500 text-sm mb-8 leading-relaxed">
+    <div className="flex min-h-screen items-center justify-center bg-zinc-950 p-4">
+      <div className="max-w-sm text-center">
+        <p className="mb-4 text-8xl leading-none font-black text-yellow-400">404</p>
+        <h1 className="mb-2 text-2xl font-bold text-white">Page not found</h1>
+        <p className="mb-8 text-sm leading-relaxed text-zinc-500">
           The page you're looking for doesn't exist or has been moved.
         </p>
         <button
-          onClick={() => navigate("/")}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl
-            bg-yellow-400 text-zinc-950 text-sm font-semibold
-            hover:bg-yellow-300 active:scale-95 transition-all duration-200
-            cursor-pointer shadow-lg shadow-yellow-400/20"
+          onClick={() => navigate('/')}
+          className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-yellow-400 px-5 py-2.5 text-sm font-semibold text-zinc-950 shadow-lg shadow-yellow-400/20 transition-all duration-200 hover:bg-yellow-300 active:scale-95"
         >
           <LuArrowLeft size={16} />
           Back to Dashboard

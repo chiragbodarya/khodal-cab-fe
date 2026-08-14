@@ -1,36 +1,29 @@
-import { useState, useRef, useEffect } from "react";
-import {
-  LuBell,
-  LuSearch,
-  LuPlus,
-  LuChevronDown,
-  LuUser,
-  LuSettings,
-} from "react-icons/lu";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { logout } from "../../redux/slices/authSlice";
-import { useNavigate } from "react-router-dom";
+import { useState, useRef, useEffect } from 'react';
+import { LuBell, LuSearch, LuPlus, LuChevronDown, LuUser, LuSettings } from 'react-icons/lu';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { logout } from '../../redux/slices/authSlice';
+import { useNavigate } from 'react-router-dom';
 
 const NOTIFICATIONS = [
   {
     id: 1,
-    title: "New task assigned",
-    desc: "Design the homepage layout",
-    time: "2m ago",
+    title: 'New task assigned',
+    desc: 'Design the homepage layout',
+    time: '2m ago',
     unread: true,
   },
   {
     id: 2,
-    title: "Comment on your task",
-    desc: "Alex left a comment on API integration",
-    time: "15m ago",
+    title: 'Comment on your task',
+    desc: 'Alex left a comment on API integration',
+    time: '15m ago',
     unread: true,
   },
   {
     id: 3,
-    title: "Task completed",
-    desc: "Setup CI/CD pipeline is done",
-    time: "1h ago",
+    title: 'Task completed',
+    desc: 'Setup CI/CD pipeline is done',
+    time: '1h ago',
     unread: false,
   },
 ];
@@ -45,49 +38,39 @@ export const Header = () => {
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const user = useAppSelector((s) => s.auth.user);
+  const user = useAppSelector(s => s.auth.user);
 
-  const unreadCount = NOTIFICATIONS.filter((n) => n.unread).length;
+  const unreadCount = NOTIFICATIONS.filter(n => n.unread).length;
   const initials = user?.name
     ? user.name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
+        .split(' ')
+        .map(n => n[0])
+        .join('')
         .toUpperCase()
         .slice(0, 2)
-    : "U";
+    : 'U';
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (notifRef.current && !notifRef.current.contains(e.target as Node))
-        setShowNotif(false);
-      if (userRef.current && !userRef.current.contains(e.target as Node))
-        setShowUserMenu(false);
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) setShowNotif(false);
+      if (userRef.current && !userRef.current.contains(e.target as Node)) setShowUserMenu(false);
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/login");
+    navigate('/login');
   };
 
   return (
-    <header
-      className="sticky top-0 z-20 flex items-center justify-between
-        px-6 h-[72px] bg-theme-header backdrop-blur-xl
-        border-b border-theme-muted flex-shrink-0 transition-colors duration-200"
-    >
+    <header className="bg-theme-header border-theme-muted sticky top-0 z-20 flex h-[72px] flex-shrink-0 items-center justify-between border-b px-6 backdrop-blur-xl transition-colors duration-200">
       {/* ── Search ── */}
       <div
-        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl bg-theme-card border
-          transition-all duration-200 w-72
-          ${
-            searchFocused
-              ? "border-yellow-400/50 ring-2 ring-yellow-400/10"
-              : "border-theme-muted"
-          }`}
+        className={`bg-theme-card flex w-72 items-center gap-2 rounded-xl border px-4 py-2.5 transition-all duration-200 ${
+          searchFocused ? 'border-yellow-400/50 ring-2 ring-yellow-400/10' : 'border-theme-muted'
+        }`}
       >
         <LuSearch size={16} className="text-theme-muted flex-shrink-0" />
         <input
@@ -95,9 +78,9 @@ export const Header = () => {
           placeholder="Search tasks..."
           onFocus={() => setSearchFocused(true)}
           onBlur={() => setSearchFocused(false)}
-          className="bg-transparent text-sm text-theme-primary placeholder-theme-muted outline-none flex-1"
+          className="text-theme-primary placeholder-theme-muted flex-1 bg-transparent text-sm outline-none"
         />
-        <kbd className="hidden sm:flex text-[10px] text-theme-muted border border-theme-muted rounded px-1.5 py-0.5 font-mono">
+        <kbd className="text-theme-muted border-theme-muted hidden rounded border px-1.5 py-0.5 font-mono text-[10px] sm:flex">
           ⌘K
         </kbd>
       </div>
@@ -105,13 +88,7 @@ export const Header = () => {
       {/* ── Right actions ── */}
       <div className="flex items-center gap-3">
         {/* New Task */}
-        <button
-          className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl
-            text-sm font-semibold bg-yellow-400 text-zinc-950
-            hover:bg-yellow-300 active:scale-95
-            transition-all duration-200 cursor-pointer
-            shadow-lg shadow-yellow-400/20"
-        >
+        <button className="hidden cursor-pointer items-center gap-2 rounded-xl bg-yellow-400 px-4 py-2 text-sm font-semibold text-zinc-950 shadow-lg shadow-yellow-400/20 transition-all duration-200 hover:bg-yellow-300 active:scale-95 sm:flex">
           <LuPlus size={16} />
           New Task
         </button>
@@ -124,58 +101,47 @@ export const Header = () => {
               setShowNotif(!showNotif);
               setShowUserMenu(false);
             }}
-            className="relative w-10 h-10 rounded-xl bg-theme-card border border-theme-muted
-              flex items-center justify-center text-theme-secondary
-              hover:text-theme-primary hover:border-theme-primary
-              transition-all duration-200 cursor-pointer"
+            className="bg-theme-card border-theme-muted text-theme-secondary hover:text-theme-primary hover:border-theme-primary relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border transition-all duration-200"
           >
             <LuBell size={18} />
             {unreadCount > 0 && (
-              <span
-                className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1
-                  rounded-full bg-yellow-400 text-zinc-950 text-[9px] font-bold
-                  flex items-center justify-center border-2 border-theme-card"
-              >
+              <span className="border-theme-card absolute -top-1 -right-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full border-2 bg-yellow-400 px-1 text-[9px] font-bold text-zinc-950">
                 {unreadCount}
               </span>
             )}
           </button>
 
           {showNotif && (
-            <div className="absolute right-0 top-12 w-80 rounded-2xl bg-theme-card border border-theme-muted shadow-2xl shadow-black/10 overflow-hidden z-50">
-              <div className="flex items-center justify-between px-4 py-3 border-b border-theme-muted">
-                <h3 className="text-sm font-semibold text-theme-primary">
-                  Notifications
-                </h3>
-                <button className="text-xs text-yellow-400 hover:text-yellow-300 transition-colors cursor-pointer">
+            <div className="bg-theme-card border-theme-muted absolute top-12 right-0 z-50 w-80 overflow-hidden rounded-2xl border shadow-2xl shadow-black/10">
+              <div className="border-theme-muted flex items-center justify-between border-b px-4 py-3">
+                <h3 className="text-theme-primary text-sm font-semibold">Notifications</h3>
+                <button className="cursor-pointer text-xs text-yellow-400 transition-colors hover:text-yellow-300">
                   Mark all read
                 </button>
               </div>
-              <div className="divide-y divide-theme-muted max-h-60 overflow-y-auto">
-                {NOTIFICATIONS.map((n) => (
+              <div className="divide-theme-muted max-h-60 divide-y overflow-y-auto">
+                {NOTIFICATIONS.map(n => (
                   <div
                     key={n.id}
-                    className={`px-4 py-3 hover:bg-theme-input cursor-pointer transition-colors ${
-                      n.unread ? "bg-yellow-400/[0.03]" : ""
+                    className={`hover:bg-theme-input cursor-pointer px-4 py-3 transition-colors ${
+                      n.unread ? 'bg-yellow-400/[0.03]' : ''
                     }`}
                   >
                     <div className="flex gap-3">
                       {n.unread && (
-                        <span className="mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-yellow-400" />
+                        <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-yellow-400" />
                       )}
-                      <div className={n.unread ? "" : "pl-4"}>
-                        <p className="text-sm font-medium text-theme-primary">
-                          {n.title}
-                        </p>
-                        <p className="text-xs text-theme-muted mt-0.5">{n.desc}</p>
-                        <p className="text-xs text-theme-muted mt-1">{n.time}</p>
+                      <div className={n.unread ? '' : 'pl-4'}>
+                        <p className="text-theme-primary text-sm font-medium">{n.title}</p>
+                        <p className="text-theme-muted mt-0.5 text-xs">{n.desc}</p>
+                        <p className="text-theme-muted mt-1 text-xs">{n.time}</p>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="px-4 py-2.5 border-t border-theme-muted text-center">
-                <button className="text-xs text-yellow-400 hover:text-yellow-300 transition-colors cursor-pointer">
+              <div className="border-theme-muted border-t px-4 py-2.5 text-center">
+                <button className="cursor-pointer text-xs text-yellow-400 transition-colors hover:text-yellow-300">
                   View all notifications
                 </button>
               </div>
@@ -191,57 +157,52 @@ export const Header = () => {
               setShowUserMenu(!showUserMenu);
               setShowNotif(false);
             }}
-            className="flex items-center gap-2.5 pl-2.5 pr-2 py-1.5 rounded-xl
-              bg-theme-card border border-theme-muted
-              hover:border-theme-primary transition-all duration-200 cursor-pointer"
+            className="bg-theme-card border-theme-muted hover:border-theme-primary flex cursor-pointer items-center gap-2.5 rounded-xl border py-1.5 pr-2 pl-2.5 transition-all duration-200"
           >
-            <div
-              className="w-7 h-7 rounded-lg bg-yellow-400 flex items-center justify-center
-                text-zinc-950 text-xs font-bold flex-shrink-0"
-            >
+            <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-yellow-400 text-xs font-bold text-zinc-950">
               {initials}
             </div>
-            <div className="hidden sm:block text-left">
-              <p className="text-xs font-semibold text-theme-primary leading-tight">
-                {user?.name ?? "Guest"}
+            <div className="hidden text-left sm:block">
+              <p className="text-theme-primary text-xs leading-tight font-semibold">
+                {user?.name ?? 'Guest'}
               </p>
-              <p className="text-[10px] text-theme-muted leading-tight capitalize">
-                {user?.role ?? "—"}
+              <p className="text-theme-muted text-[10px] leading-tight capitalize">
+                {user?.role ?? '—'}
               </p>
             </div>
             <LuChevronDown size={14} className="text-theme-muted ml-1" />
           </button>
 
           {showUserMenu && (
-            <div className="absolute right-0 top-12 w-52 rounded-2xl bg-theme-card border border-theme-muted shadow-2xl shadow-black/10 overflow-hidden z-50">
-              <div className="px-4 py-3 border-b border-theme-muted">
-                <p className="text-sm font-semibold text-theme-primary">{user?.name}</p>
-                <p className="text-xs text-theme-muted mt-0.5">{user?.email}</p>
+            <div className="bg-theme-card border-theme-muted absolute top-12 right-0 z-50 w-52 overflow-hidden rounded-2xl border shadow-2xl shadow-black/10">
+              <div className="border-theme-muted border-b px-4 py-3">
+                <p className="text-theme-primary text-sm font-semibold">{user?.name}</p>
+                <p className="text-theme-muted mt-0.5 text-xs">{user?.email}</p>
               </div>
               <button
                 onClick={() => {
-                  navigate("/profile");
+                  navigate('/profile');
                   setShowUserMenu(false);
                 }}
-                className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-theme-secondary hover:bg-theme-input hover:text-theme-primary transition-colors cursor-pointer"
+                className="text-theme-secondary hover:bg-theme-input hover:text-theme-primary flex w-full cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm transition-colors"
               >
                 <LuUser size={15} />
                 My Profile
               </button>
               <button
                 onClick={() => {
-                  navigate("/settings");
+                  navigate('/settings');
                   setShowUserMenu(false);
                 }}
-                className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-theme-secondary hover:bg-theme-input hover:text-theme-primary transition-colors cursor-pointer"
+                className="text-theme-secondary hover:bg-theme-input hover:text-theme-primary flex w-full cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm transition-colors"
               >
                 <LuSettings size={15} />
                 Settings
               </button>
-              <div className="border-t border-theme-muted">
+              <div className="border-theme-muted border-t">
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-red-450/5 hover:text-red-300 transition-colors cursor-pointer"
+                  className="hover:bg-red-450/5 w-full cursor-pointer px-4 py-2.5 text-left text-sm text-red-400 transition-colors hover:text-red-300"
                 >
                   Sign out
                 </button>

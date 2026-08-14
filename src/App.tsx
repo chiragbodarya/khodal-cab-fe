@@ -1,8 +1,8 @@
-import { useEffect } from "react";
-import { RouterProvider } from "react-router-dom";
-import { router } from "./routes";
-import { Toaster } from "react-hot-toast";
-import { applyTheme, getTheme, setupThemeListener } from "./utils/theme";
+import { useEffect } from 'react';
+import { RouterProvider } from 'react-router-dom';
+import { router } from './routes';
+import { Toaster } from 'react-hot-toast';
+import { applyTheme, getTheme, setupThemeListener } from './utils/theme';
 
 function App() {
   useEffect(() => {

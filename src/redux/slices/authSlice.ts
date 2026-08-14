@@ -1,6 +1,6 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-export type UserRole = "admin" | "manager" | "user";
+export type UserRole = 'admin' | 'manager' | 'user';
 
 export interface AuthUser {
   id: string;
@@ -16,7 +16,7 @@ interface AuthState {
 }
 
 // Load initial state from localStorage if exists
-const savedUser = localStorage.getItem("tc_admin_session");
+const savedUser = localStorage.getItem('tc_admin_session');
 const initialUser = savedUser ? JSON.parse(savedUser) : null;
 
 const initialState: AuthState = {
@@ -25,18 +25,18 @@ const initialState: AuthState = {
 };
 
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
     login: (state, action: PayloadAction<AuthUser>) => {
       state.isLoggedIn = true;
       state.user = action.payload;
-      localStorage.setItem("tc_admin_session", JSON.stringify(action.payload));
+      localStorage.setItem('tc_admin_session', JSON.stringify(action.payload));
     },
-    logout: (state) => {
+    logout: state => {
       state.isLoggedIn = false;
       state.user = null;
-      localStorage.removeItem("tc_admin_session");
+      localStorage.removeItem('tc_admin_session');
     },
   },
 });

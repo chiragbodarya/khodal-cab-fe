@@ -1,48 +1,48 @@
-import { createBrowserRouter } from "react-router-dom";
-import { PublicLayout, AdminLayout } from "../components/layout";
-import { Home } from "../pages/Home";
-import { Vehicles } from "../pages/Vehicles";
-import { TravelPlans } from "../pages/TravelPlans";
-import { Blogs } from "../pages/Blogs";
-import { Contact } from "../pages/Contact";
-import { Gallery } from "../pages/Gallery";
-import { AdminLogin } from "../pages/AdminLogin";
-import { Dashboard as AdminDashboard } from "../pages/admin/Dashboard";
-import { ManageFleet } from "../pages/admin/ManageFleet";
-import { ManagePlans } from "../pages/admin/ManagePlans";
-import { ManageBlogs } from "../pages/admin/ManageBlogs";
-import { NotFound } from "../pages/NotFound";
+import { createBrowserRouter } from 'react-router-dom';
+import { PublicLayout, AdminLayout } from '../components/layout';
+import { Home } from '../pages/Home';
+import { Vehicles } from '../pages/Vehicles';
+import { TravelPlans } from '../pages/TravelPlans';
+import { Blogs } from '../pages/Blogs';
+import { Contact } from '../pages/Contact';
+import { Gallery } from '../pages/Gallery';
+import { AdminLogin } from '../pages/AdminLogin';
+import { Dashboard as AdminDashboard } from '../pages/admin/Dashboard';
+import { ManageFleet } from '../pages/admin/ManageFleet';
+import { ManagePlans } from '../pages/admin/ManagePlans';
+import { ManageBlogs } from '../pages/admin/ManageBlogs';
+import { NotFound } from '../pages/NotFound';
 
 export const router = createBrowserRouter([
   {
     element: <PublicLayout />,
     children: [
       {
-        path: "/",
+        path: '/',
         element: <Home />,
       },
       {
-        path: "/vehicles",
+        path: '/vehicles',
         element: <Vehicles />,
       },
       {
-        path: "/plans",
+        path: '/plans',
         element: <TravelPlans />,
       },
       {
-        path: "/blogs",
+        path: '/blogs',
         element: <Blogs />,
       },
       {
-        path: "/contact",
+        path: '/contact',
         element: <Contact />,
       },
       {
-        path: "/gallery",
+        path: '/gallery',
         element: <Gallery />,
       },
       {
-        path: "/backstage/login",
+        path: '/backstage/login',
         element: <AdminLogin />,
       },
     ],
@@ -51,25 +51,25 @@ export const router = createBrowserRouter([
     element: <AdminLayout />,
     children: [
       {
-        path: "/backstage/dashboard",
+        path: '/backstage/dashboard',
         element: <AdminDashboard />,
       },
       {
-        path: "/backstage/fleet",
+        path: '/backstage/fleet',
         element: <ManageFleet />,
       },
       {
-        path: "/backstage/plans",
+        path: '/backstage/plans',
         element: <ManagePlans />,
       },
       {
-        path: "/backstage/blogs",
+        path: '/backstage/blogs',
         element: <ManageBlogs />,
       },
     ],
   },
   {
-    path: "*",
+    path: '*',
     element: <NotFound />,
   },
 ]);
