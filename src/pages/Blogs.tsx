@@ -1,18 +1,14 @@
-import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import { getBlogs, type Blog } from "../utils/storage";
-import { LuTag, LuArrowLeft, LuEye } from "react-icons/lu";
+import { useSearchParams } from 'react-router-dom';
+import { useGetBlogsQuery } from '../redux/slices/blogApiSlice';
+import { LuTag, LuArrowLeft, LuEye } from 'react-icons/lu';
 
 export const Blogs = () => {
-  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const { data: blogData } = useGetBlogsQuery({});
+  const blogs = blogData?.data || [];
   const [searchParams, setSearchParams] = useSearchParams();
-  const blogId = searchParams.get("id");
+  const blogId = searchParams.get('id');
 
-  useEffect(() => {
-    setBlogs(getBlogs());
-  }, [blogId]);
-
-  const activeBlog = blogs.find((b) => b.id === blogId);
+  const activeBlog = blogs.find((b: any) => b.id === blogId);
 
   // Handle go back
   const handleBackToList = () => {
@@ -20,20 +16,26 @@ export const Blogs = () => {
   };
 
   const renderBlogContent = (content: string) => {
-    return content.split("\n\n").map((block, index) => {
+    return content.split('\n\n').map((block, index) => {
       const trimmed = block.trim();
-      if (trimmed.startsWith("###")) {
-        const headingText = trimmed.replace(/^###\s*/, "");
+      if (trimmed.startsWith('###')) {
+        const headingText = trimmed.replace(/^###\s*/, '');
         return (
-          <h3 key={index} className="text-lg sm:text-xl font-bold text-theme-primary mt-8 mb-4 border-l-4 border-amber-400 pl-3 transition-colors">
+          <h3
+            key={index}
+            className="text-theme-primary mt-8 mb-4 border-l-4 border-amber-400 pl-3 text-lg font-bold transition-colors sm:text-xl"
+          >
             {headingText}
           </h3>
         );
       }
-      if (trimmed.startsWith("-") || trimmed.startsWith("*")) {
-        const items = trimmed.split("\n").map(li => li.replace(/^[-*]\s*/, ""));
+      if (trimmed.startsWith('-') || trimmed.startsWith('*')) {
+        const items = trimmed.split('\n').map(li => li.replace(/^[-*]\s*/, ''));
         return (
-          <ul key={index} className="list-disc list-inside pl-4 space-y-2 my-4 text-theme-secondary">
+          <ul
+            key={index}
+            className="text-theme-secondary my-4 list-inside list-disc space-y-2 pl-4"
+          >
             {items.map((item, i) => (
               <li key={i}>{item}</li>
             ))}
@@ -51,12 +53,12 @@ export const Blogs = () => {
   // Render detail view
   if (blogId && activeBlog) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8 animate-in text-theme-primary">
+      <div className="animate-in text-theme-primary mx-auto max-w-4xl space-y-8 px-4 py-10 sm:px-6 lg:px-8">
         {/* Back button */}
         <div>
           <button
             onClick={handleBackToList}
-            className="inline-flex items-center gap-2 text-xs font-bold text-amber-500 dark:text-amber-400 hover:text-amber-600 dark:hover:text-amber-300 transition-all cursor-pointer bg-theme-card border border-theme-muted px-4 py-2 rounded-xl shadow-sm hover:shadow-md hover:bg-theme-input"
+            className="bg-theme-card border-theme-muted hover:bg-theme-input inline-flex cursor-pointer items-center gap-2 rounded-xl border px-4 py-2 text-xs font-bold text-amber-500 shadow-sm transition-all hover:text-amber-600 hover:shadow-md dark:text-amber-400 dark:hover:text-amber-300"
           >
             <LuArrowLeft size={14} /> Back to Guides
           </button>
@@ -66,49 +68,55 @@ export const Blogs = () => {
         <article className="space-y-8">
           {/* Title & Category Area */}
           <div className="space-y-4 text-center sm:text-left">
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
-              {activeBlog.tags.map((t, i) => (
+            <div className="flex flex-wrap items-center justify-center gap-2.5 sm:justify-start">
+              {((activeBlog as any).tags || ['Travel']).map((t: string, i: number) => (
                 <span
                   key={i}
-                  className="px-3 py-1 rounded-full bg-amber-400/10 text-amber-550 dark:text-amber-400 border border-amber-400/20 text-[10px] uppercase font-bold tracking-wider"
+                  className="text-amber-550 rounded-full border border-amber-400/20 bg-amber-400/10 px-3 py-1 text-[10px] font-bold tracking-wider uppercase dark:text-amber-400"
                 >
                   {t}
                 </span>
               ))}
-              <span className="text-xs text-theme-muted">•</span>
-              <span className="flex items-center gap-1 text-xs text-theme-muted font-medium">
-                <LuEye size={13} className="text-amber-400" /> {activeBlog.views} Views
+              <span className="text-theme-muted text-xs">•</span>
+              <span className="text-theme-muted flex items-center gap-1 text-xs font-medium">
+                <LuEye size={13} className="text-amber-400" /> {(activeBlog as any).views || 0}{' '}
+                Views
               </span>
             </div>
-            
-            <h1 className="text-3xl sm:text-5xl font-black text-theme-primary leading-tight tracking-tight">
-              {activeBlog.title}
+
+            <h1 className="text-theme-primary text-3xl leading-tight font-black tracking-tight sm:text-5xl">
+              {(activeBlog as any).title}
             </h1>
 
             {/* Author Info */}
-            <div className="flex items-center justify-center sm:justify-start gap-3 pt-2">
-              <div className="w-10 h-10 rounded-full bg-amber-400/10 text-amber-500 dark:text-amber-400 flex items-center justify-center font-bold text-sm border border-amber-400/20">
-                {activeBlog.author[0].toUpperCase()}
+            <div className="flex items-center justify-center gap-3 pt-2 sm:justify-start">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-amber-400/20 bg-amber-400/10 text-sm font-bold text-amber-500 dark:text-amber-400">
+                {((activeBlog as any).author || 'Admin')[0].toUpperCase()}
               </div>
               <div className="text-left">
-                <p className="text-xs font-bold text-theme-primary">By {activeBlog.author}</p>
-                <p className="text-[10px] text-theme-muted">{activeBlog.date}</p>
+                <p className="text-theme-primary text-xs font-bold">
+                  By {(activeBlog as any).author || 'Admin'}
+                </p>
+                <p className="text-theme-muted text-[10px]">{(activeBlog as any).date}</p>
               </div>
             </div>
           </div>
 
           {/* Large Cinematic Cover Photo */}
-          <div className="aspect-[16/9] w-full rounded-3xl overflow-hidden bg-theme-input shadow-xl border border-theme-muted">
+          <div className="bg-theme-input border-theme-muted aspect-[16/9] w-full overflow-hidden rounded-3xl border shadow-xl">
             <img
-              src={activeBlog.photo}
-              alt={activeBlog.title}
-              className="w-full h-full object-cover"
+              src={
+                (activeBlog as any).photo ||
+                'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957'
+              }
+              alt={(activeBlog as any).title}
+              className="h-full w-full object-cover"
             />
           </div>
 
           {/* Content Area */}
-          <div className="max-w-3xl mx-auto pt-6 border-t border-theme-muted space-y-6 text-base leading-relaxed text-theme-secondary font-light">
-            {renderBlogContent(activeBlog.content)}
+          <div className="border-theme-muted text-theme-secondary mx-auto max-w-3xl space-y-6 border-t pt-6 text-base leading-relaxed font-light">
+            {renderBlogContent((activeBlog as any).content || '')}
           </div>
         </article>
       </div>
@@ -117,63 +125,66 @@ export const Blogs = () => {
 
   // Render list view
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 animate-in text-theme-primary">
+    <div className="animate-in text-theme-primary mx-auto max-w-7xl space-y-12 px-4 py-10 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="text-center space-y-3">
-        <h1 className="text-3xl sm:text-5xl font-black text-theme-primary">Travel Guides & Blog</h1>
-        <p className="text-theme-secondary text-sm max-w-xl mx-auto font-light">
-          Travel recommendations, fleet guides, SEO articles, and local secrets compiled by our experienced tourism guides.
+      <div className="space-y-3 text-center">
+        <h1 className="text-theme-primary text-3xl font-black sm:text-5xl">Travel Guides & Blog</h1>
+        <p className="text-theme-secondary mx-auto max-w-xl text-sm font-light">
+          Travel recommendations, fleet guides, SEO articles, and local secrets compiled by our
+          experienced tourism guides.
         </p>
-        <div className="w-16 h-1 bg-amber-400 mx-auto rounded-full mt-4" />
+        <div className="mx-auto mt-4 h-1 w-16 rounded-full bg-amber-400" />
       </div>
 
       {/* Blogs List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {blogs.map((blog) => (
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {blogs.map(blog => (
           <article
             key={blog.id}
             onClick={() => setSearchParams({ id: blog.id })}
-            className="group rounded-2xl bg-theme-card border border-theme-muted overflow-hidden hover:border-amber-400/30 transition-all flex flex-col h-full shadow-md dark:shadow-lg cursor-pointer"
+            className="group bg-theme-card border-theme-muted flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border shadow-md transition-all hover:border-amber-400/30 dark:shadow-lg"
           >
             {/* Image */}
             <div className="relative aspect-video overflow-hidden">
               <img
-                src={blog.photo}
-                alt={blog.title}
-                className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
+                src={
+                  (blog as any).photo || 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957'
+                }
+                alt={(blog as any).title}
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-102"
               />
-              <div className="absolute top-3 left-3 px-2 py-1 rounded bg-zinc-950/80 backdrop-blur-md border border-zinc-800 text-[10px] font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1">
+              <div className="absolute top-3 left-3 flex items-center gap-1 rounded border border-zinc-800 bg-zinc-950/80 px-2 py-1 text-[10px] font-bold tracking-wider text-amber-400 uppercase backdrop-blur-md">
                 <LuTag size={10} />
-                {blog.tags[0] || "Travel"}
+                {((blog as any).tags || [])[0] || 'Travel'}
               </div>
             </div>
 
             {/* Content */}
-            <div className="p-6 flex-grow flex flex-col justify-between space-y-6">
+            <div className="flex flex-grow flex-col justify-between space-y-6 p-6">
               <div className="space-y-3">
-                <div className="flex items-center gap-2 text-[10px] text-theme-muted font-semibold">
-                  <span>{blog.author}</span>
+                <div className="text-theme-muted flex items-center gap-2 text-[10px] font-semibold">
+                  <span>{(blog as any).author || 'Admin'}</span>
                   <span>•</span>
-                  <span>{blog.date}</span>
+                  <span>{(blog as any).date}</span>
                 </div>
-                <h3 className="text-lg font-bold text-theme-primary group-hover:text-amber-500 dark:group-hover:text-amber-400 transition-colors leading-snug">
-                  {blog.title}
+                <h3 className="text-theme-primary text-lg leading-snug font-bold transition-colors group-hover:text-amber-500 dark:group-hover:text-amber-400">
+                  {(blog as any).title}
                 </h3>
-                <p className="text-theme-secondary text-xs font-light line-clamp-3 leading-relaxed">
-                  {blog.excerpt}
+                <p className="text-theme-secondary line-clamp-3 text-xs leading-relaxed font-light">
+                  {(blog as any).excerpt}
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-theme-muted flex items-center justify-between text-xs text-amber-500 dark:text-amber-400 font-bold group-hover:text-amber-600 dark:group-hover:text-amber-300">
+              <div className="border-theme-muted flex items-center justify-between border-t pt-4 text-xs font-bold text-amber-500 group-hover:text-amber-600 dark:text-amber-400 dark:group-hover:text-amber-300">
                 <span>Read Full Article</span>
-                <span className="transform group-hover:translate-x-1 transition-transform">→</span>
+                <span className="transform transition-transform group-hover:translate-x-1">→</span>
               </div>
             </div>
           </article>
         ))}
 
         {blogs.length === 0 && (
-          <div className="col-span-full py-16 text-center text-theme-muted">
+          <div className="text-theme-muted col-span-full py-16 text-center">
             No blog articles found. Log in as admin to publish your first travel guide.
           </div>
         )}

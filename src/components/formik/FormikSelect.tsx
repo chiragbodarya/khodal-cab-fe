@@ -1,4 +1,4 @@
-import { useField } from "formik";
+import { useField } from 'formik';
 
 export interface SelectOption {
   value: string;
@@ -19,7 +19,7 @@ export const FormikSelect = ({
   name,
   label,
   options,
-  placeholder = "Select an option",
+  placeholder = 'Select an option',
   helperText,
   required,
   disabled,
@@ -32,7 +32,7 @@ export const FormikSelect = ({
       {label && (
         <label htmlFor={name} className="text-sm font-medium text-zinc-300">
           {label}
-          {required && <span className="text-yellow-400 ml-0.5">*</span>}
+          {required && <span className="ml-0.5 text-yellow-400">*</span>}
         </label>
       )}
 
@@ -41,35 +41,24 @@ export const FormikSelect = ({
           id={name}
           {...field}
           disabled={disabled}
-          className={`
-            appearance-none bg-zinc-900 border rounded-lg px-3.5 py-2.5
-            text-sm w-full transition-all duration-200 outline-none pr-10
-            cursor-pointer
-            ${field.value === "" ? "text-zinc-500" : "text-white"}
-            ${
-              hasError
-                ? "border-red-500 focus:ring-2 focus:ring-red-500/30"
-                : "border-zinc-700 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/20"
-            }
-            disabled:opacity-50 disabled:cursor-not-allowed
-          `}
+          className={`w-full cursor-pointer appearance-none rounded-lg border bg-zinc-900 px-3.5 py-2.5 pr-10 text-sm transition-all duration-200 outline-none ${field.value === '' ? 'text-zinc-500' : 'text-white'} ${
+            hasError
+              ? 'border-red-500 focus:ring-2 focus:ring-red-500/30'
+              : 'border-zinc-700 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400/20'
+          } disabled:cursor-not-allowed disabled:opacity-50`}
         >
           <option value="" disabled>
             {placeholder}
           </option>
-          {options.map((opt) => (
-            <option
-              key={opt.value}
-              value={opt.value}
-              className="bg-zinc-900 text-white"
-            >
+          {options.map(opt => (
+            <option key={opt.value} value={opt.value} className="bg-zinc-900 text-white">
               {opt.label}
             </option>
           ))}
         </select>
 
         {/* Custom chevron */}
-        <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500">
+        <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-zinc-500">
           <svg
             width="14"
             height="14"
@@ -86,9 +75,7 @@ export const FormikSelect = ({
       </div>
 
       {hasError && <p className="text-xs text-red-400">{meta.error}</p>}
-      {!hasError && helperText && (
-        <p className="text-xs text-zinc-500">{helperText}</p>
-      )}
+      {!hasError && helperText && <p className="text-xs text-zinc-500">{helperText}</p>}
     </div>
   );
 };

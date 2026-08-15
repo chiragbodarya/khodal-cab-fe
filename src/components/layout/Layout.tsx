@@ -1,15 +1,15 @@
-import { Outlet } from "react-router-dom";
-import { Sidebar } from "./Sidebar";
-import { Header } from "./Header";
+import { Outlet } from 'react-router-dom';
+import { Sidebar } from './Sidebar';
+import { Header } from './Header';
 
 export const Layout = () => {
   return (
-    <div className="flex h-screen w-full bg-theme-app overflow-hidden text-theme-primary transition-colors duration-200">
+    <div className="bg-theme-app text-theme-primary flex h-screen w-full overflow-hidden transition-colors duration-200">
       {/* Sidebar */}
       <Sidebar />
 
       {/* Main area */}
-      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         {/* Header */}
         <Header />
 
