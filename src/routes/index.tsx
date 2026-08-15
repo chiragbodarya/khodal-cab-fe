@@ -11,6 +11,7 @@ import { Dashboard as AdminDashboard } from '../pages/admin/Dashboard';
 import { ManageFleet } from '../pages/admin/ManageFleet';
 import { ManagePlans } from '../pages/admin/ManagePlans';
 import { ManageBlogs } from '../pages/admin/ManageBlogs';
+import { ManageGallery } from '../pages/admin/ManageGallery';
 import { NotFound } from '../pages/NotFound';
 
 export const router = createBrowserRouter([
@@ -65,6 +66,10 @@ export const router = createBrowserRouter([
       {
         path: '/backstage/blogs',
         element: <ManageBlogs />,
+      },
+      {
+        path: '/backstage/gallery',
+        element: <ManageGallery />,
       },
     ],
   },

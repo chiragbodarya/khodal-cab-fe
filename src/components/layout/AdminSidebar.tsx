@@ -9,6 +9,7 @@ import {
   LuChevronLeft,
   LuChevronRight,
   LuArrowLeft,
+  LuImage,
 } from 'react-icons/lu';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { logout } from '../../redux/slices/authSlice';
@@ -26,9 +27,10 @@ export const AdminSidebar = () => {
 
   const navItems = [
     { label: 'Dashboard', path: '/backstage/dashboard', Icon: LuLayoutDashboard },
-    { label: 'Manage Fleet', path: '/backstage/fleet', Icon: LuBus },
-    { label: 'Manage Places', path: '/backstage/plans', Icon: LuMapPin },
+    { label: 'Manage Vehicles', path: '/backstage/fleet', Icon: LuBus },
+    { label: 'Manage Plans', path: '/backstage/plans', Icon: LuMapPin },
     { label: 'Manage Blogs', path: '/backstage/blogs', Icon: LuFileText },
+    { label: 'Manage Gallery', path: '/backstage/gallery', Icon: LuImage },
   ];
 
   const initials = user?.name

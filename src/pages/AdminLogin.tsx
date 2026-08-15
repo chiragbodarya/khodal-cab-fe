@@ -6,7 +6,7 @@ import { useLoginMutation } from '../redux/slices/adminApiSlice';
 import { LuLock, LuMail, LuArrowLeft } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import { Formik, Form } from 'formik';
-import { FormikInput } from '../components/formik';
+import { FormikInput } from '../components/common/formik';
 
 export const AdminLogin = () => {
   const dispatch = useAppDispatch();
@@ -27,15 +27,19 @@ export const AdminLogin = () => {
         email: values.email,
         password: values.password,
       }).unwrap();
-      const { admin } = response.data;
+      const { admin, accessToken, refreshToken } = response.data;
 
       dispatch(
         loginAction({
-          id: admin.id,
-          name: admin.name || 'Admin',
-          email: admin.email,
-          role: 'admin',
-          avatar: admin.avatar || '',
+          user: {
+            id: admin.id,
+            name: admin.name || 'Admin',
+            email: admin.email,
+            role: 'admin',
+            avatar: admin.avatar || '',
+          },
+          token: accessToken,
+          refreshToken,
         })
       );
       toast.success('Login successful! Admin session started.');

@@ -3,7 +3,7 @@ import { LuMail, LuPhone, LuMapPin, LuSend, LuClock } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import { COMPANY_DETAILS } from '../utils/constants';
 import { Formik, Form } from 'formik';
-import { FormikInput, FormikTextarea } from '../components/formik';
+import { FormikInput, FormikTextarea } from '../components/common/formik';
 
 export const Contact = () => {
   const [createInquiry, { isLoading: loading }] = useCreateInquiryMutation();

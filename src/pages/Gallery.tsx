@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useGetGalleryQuery } from '../redux/slices/galleryApiSlice';
 import {
   LuImage,
   LuMapPin,
@@ -13,7 +14,7 @@ import {
 interface GalleryItem {
   id: string;
   title: string;
-  category: 'bus' | 'cab' | 'destination';
+  category: 'bus' | 'cab' | 'destination' | string;
   photo: string;
   location?: string;
 }
@@ -129,6 +130,18 @@ const REVIEWS = [
 ];
 
 export const Gallery = () => {
+  const { data: liveGalleryData } = useGetGalleryQuery();
+  const rawItems = (liveGalleryData?.data as any[]) || [];
+  const liveItems: GalleryItem[] = rawItems.map((item: any) => ({
+    id: String(item.id || item._id),
+    title: item.title || item.caption || 'Khodel Showcase',
+    category: item.category || 'bus',
+    photo: item.imageUrl || item.photo || '',
+    location: item.location || '',
+  }));
+
+  const allItems = liveItems.length > 0 ? liveItems : GALLERY_ITEMS;
+
   const [filter, setFilter] = useState<string>('all');
   const [activePhoto, setActivePhoto] = useState<GalleryItem | null>(null);
   const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
@@ -141,7 +154,7 @@ export const Gallery = () => {
     setCurrentReviewIndex(prev => (prev === REVIEWS.length - 1 ? 0 : prev + 1));
   };
 
-  const filteredItems = GALLERY_ITEMS.filter(item => filter === 'all' || item.category === filter);
+  const filteredItems = allItems.filter(item => filter === 'all' || item.category === filter);
 
   return (
     <div className="animate-in mx-auto max-w-7xl space-y-16 px-4 py-10 sm:px-6 lg:px-8">

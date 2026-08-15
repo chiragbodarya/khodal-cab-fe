@@ -1,16 +1,21 @@
 import { useState } from 'react';
 import { useGetTourPlansQuery } from '../redux/slices/tourApiSlice';
+import { useGetCabPlansQuery } from '../redux/slices/cabApiSlice';
 import { useCreateInquiryMutation } from '../redux/slices/inquiryApiSlice';
 import { LuClock, LuCheck, LuMapPin, LuInfo, LuX, LuCar } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import { Formik, Form } from 'formik';
-import { FormikInput, FormikTextarea } from '../components/formik';
+import { FormikInput, FormikTextarea } from '../components/common/formik';
 
 import { CAB_PLANS } from '../utils/constants';
 
 export const TravelPlans = () => {
   const { data: tourData } = useGetTourPlansQuery();
-  const plans = (tourData?.data as any[]) || [];
+  const { data: cabData } = useGetCabPlansQuery();
+  const tourPlans = (tourData?.data as any[]) || [];
+  const liveCabPlans = (cabData?.data as any[]) || [];
+  const cabPlansToDisplay = liveCabPlans.length > 0 ? liveCabPlans : CAB_PLANS;
+  const plans = tourPlans;
   const [createInquiry] = useCreateInquiryMutation();
   const [selectedPlan, setSelectedPlan] = useState<any | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -67,22 +72,20 @@ export const TravelPlans = () => {
           <button
             type="button"
             onClick={() => setActiveTab('tours')}
-            className={`cursor-pointer rounded-xl px-6 py-2.5 text-xs font-bold transition-all duration-200 ${
-              activeTab === 'tours'
+            className={`cursor-pointer rounded-xl px-6 py-2.5 text-xs font-bold transition-all duration-200 ${activeTab === 'tours'
                 ? 'bg-amber-400 text-zinc-950 shadow-md'
                 : 'text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
-            }`}
+              }`}
           >
             Tour Packages
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('cabs')}
-            className={`flex cursor-pointer items-center gap-1.5 rounded-xl px-6 py-2.5 text-xs font-bold transition-all duration-200 ${
-              activeTab === 'cabs'
+            className={`flex cursor-pointer items-center gap-1.5 rounded-xl px-6 py-2.5 text-xs font-bold transition-all duration-200 ${activeTab === 'cabs'
                 ? 'bg-amber-400 text-zinc-950 shadow-md'
                 : 'text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
-            }`}
+              }`}
           >
             <LuCar size={14} /> Cab Trip Plans
           </button>
@@ -91,7 +94,7 @@ export const TravelPlans = () => {
 
       {/* Plans List */}
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {(activeTab === 'tours' ? plans : CAB_PLANS).map((plan: any) => (
+        {(activeTab === 'tours' ? plans : cabPlansToDisplay).map((plan: any) => (
           <div
             key={plan.id}
             className="group flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-md transition-all hover:border-amber-400/30 dark:border-zinc-800/85 dark:bg-zinc-900 dark:shadow-lg"

@@ -1,15 +1,32 @@
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   useGetAdminTourPlansQuery,
+  useGetTourPlansQuery,
   useCreateTourPlanMutation,
   useUpdateTourPlanMutation,
   useDeleteTourPlanMutation,
 } from '../../redux/slices/tourApiSlice';
-import { LuPlus, LuTrash2, LuPen, LuClock, LuMapPin, LuX } from 'react-icons/lu';
+import {
+  useGetAdminCabPlansQuery,
+  useGetCabPlansQuery,
+  useCreateCabPlanMutation,
+  useUpdateCabPlanMutation,
+  useDeleteCabPlanMutation,
+} from '../../redux/slices/cabApiSlice';
+import {
+  LuPlus,
+  LuTrash2,
+  LuPen,
+  LuClock,
+  LuMapPin,
+  LuCar,
+  LuCompass,
+} from 'react-icons/lu';
 import toast from 'react-hot-toast';
-import { useMemo, useCallback } from 'react';
 import { Formik, Form } from 'formik';
-import { FormikInput, FormikTextarea, FormikTagsInput } from '../../components/formik';
+import { FormikInput, FormikTextarea, FormikTagsInput } from '../../components/common/formik';
+import { ImageUploadField } from '../../components/common/ImageUploadField';
+import { AdminDrawer } from '../../components/common/AdminDrawer';
 import { Table } from '../../components/Table';
 import type { Column } from '../../components/Table';
 
@@ -32,72 +49,151 @@ const TOUR_PHOTO_PRESETS = [
   },
 ];
 
+const CAB_PHOTO_PRESETS = [
+  {
+    label: 'Mumbai Highway',
+    url: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    label: 'Airport Cab Drop',
+    url: 'https://images.unsplash.com/photo-1494976388531-d10580905c35?auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    label: 'Expressway Route',
+    url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    label: 'Multi-City Luxury Fleet',
+    url: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80',
+  },
+];
+
 export const ManagePlans = () => {
-  const { data: tourData } = useGetAdminTourPlansQuery({});
-  const plans = tourData?.data || [];
+  const [activeTab, setActiveTab] = useState<'tours' | 'cabs'>('tours');
+
+  // Tour queries & mutations
+  const { data: adminTourData, isError: isTourError } = useGetAdminTourPlansQuery({});
+  const { data: publicTourData } = useGetTourPlansQuery(undefined, { skip: !isTourError });
+  const tourPlans = (adminTourData?.data || publicTourData?.data || []) as any[];
   const [createTourPlan] = useCreateTourPlanMutation();
   const [updateTourPlan] = useUpdateTourPlanMutation();
   const [deleteTourPlan] = useDeleteTourPlanMutation();
-  const [showModal, setShowModal] = useState(false);
-  const [editingPlan, setEditingPlan] = useState<any | null>(null);
 
-  const openAddModal = useCallback(() => {
-    setEditingPlan(null);
-    setShowModal(true);
+  // Cab queries & mutations
+  const { data: adminCabData, isError: isCabError } = useGetAdminCabPlansQuery({});
+  const { data: publicCabData } = useGetCabPlansQuery(undefined, { skip: !isCabError });
+  const cabPlans = (adminCabData?.data || publicCabData?.data || []) as any[];
+  const [createCabPlan] = useCreateCabPlanMutation();
+  const [updateCabPlan] = useUpdateCabPlanMutation();
+  const [deleteCabPlan] = useDeleteCabPlanMutation();
+
+  // Drawer State
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<any | null>(null);
+
+  const openAddDrawer = useCallback(() => {
+    setEditingItem(null);
+    setIsDrawerOpen(true);
   }, []);
 
-  const openEditModal = useCallback((plan: any) => {
-    setEditingPlan(plan);
-    setShowModal(true);
+  const openEditDrawer = useCallback((item: any) => {
+    setEditingItem(item);
+    setIsDrawerOpen(true);
   }, []);
 
+  // Submit Handler
   const handleSubmit = async (values: any) => {
-    const payload = {
-      title: values.title,
-      packageName: values.title,
-      destination: values.destination,
-      tripRoute: values.destination,
-      duration: values.duration,
-      days: parseInt(values.duration) || 3,
-      nights: (parseInt(values.duration) || 3) - 1,
-      price: values.price,
-      pricePerPerson: values.price,
-      photo: values.photo,
-      coverImage: values.photo,
-      description: values.description,
-      highlights: values.highlights,
-      inclusions: values.inclusions,
-      isActive: true,
-    };
-
     try {
-      if (editingPlan) {
-        await updateTourPlan({ id: editingPlan.id || editingPlan._id, body: payload }).unwrap();
-        toast.success('Travel plan updated successfully!');
+      if (activeTab === 'tours') {
+        const payload = {
+          title: values.title || values.packageName,
+          packageName: values.title || values.packageName,
+          packageDescription: values.description,
+          description: values.description,
+          destination: values.destination || values.tripRoute,
+          tripRoute: values.destination || values.tripRoute,
+          duration: values.duration,
+          days: Number(values.days) || 3,
+          nights: Number(values.nights) || 2,
+          price: Number(values.price),
+          pricePerPerson: Number(values.price),
+          photo: values.photo,
+          coverImage: values.photo,
+          highlights: values.highlights || [],
+          inclusions: values.inclusions || [],
+          isActive: true,
+        };
+
+        if (editingItem) {
+          await updateTourPlan({
+            id: String(editingItem.id || editingItem._id),
+            body: payload as any,
+          }).unwrap();
+          toast.success('Tour package updated successfully!');
+        } else {
+          await createTourPlan(payload as any).unwrap();
+          toast.success('New tour package created!');
+        }
       } else {
-        await createTourPlan(payload).unwrap();
-        toast.success('New travel package created!');
+        // Cab Plan
+        const payload = {
+          title: values.title || values.packageName,
+          packageName: values.title || values.packageName,
+          packageDescription: values.description,
+          description: values.description,
+          tripRoute: values.destination || values.tripRoute,
+          destination: values.destination || values.tripRoute,
+          duration: values.duration || `${values.days || 1} Day`,
+          days: Number(values.days) || 1,
+          nights: Number(values.nights) || 0,
+          pricePerPerson: Number(values.price),
+          price: Number(values.price),
+          withDriver: values.withDriver ?? true,
+          photo: values.photo,
+          coverImage: values.photo,
+          highlights: values.highlights || [],
+          inclusions: values.inclusions || [],
+          isActive: true,
+        };
+
+        if (editingItem) {
+          await updateCabPlan({
+            id: String(editingItem.id || editingItem._id),
+            body: payload as any,
+          }).unwrap();
+          toast.success('Cab plan updated successfully!');
+        } else {
+          await createCabPlan(payload as any).unwrap();
+          toast.success('New cab trip plan created!');
+        }
       }
-      setShowModal(false);
-    } catch (error) {
-      toast.error('Failed to save travel plan.');
+      setIsDrawerOpen(false);
+    } catch (error: any) {
+      toast.error(error?.data?.message || error?.message || 'Failed to save plan.');
     }
   };
 
+  // Delete Handler
   const handleDelete = useCallback(
-    async (id: string) => {
-      if (window.confirm('Are you sure you want to delete this travel package?')) {
+    async (id: string | number) => {
+      const entityName = activeTab === 'tours' ? 'tour package' : 'cab plan';
+      if (window.confirm(`Are you sure you want to delete this ${entityName}?`)) {
         try {
-          await deleteTourPlan(id).unwrap();
-          toast.success('Travel package removed.');
-        } catch (error) {
-          toast.error('Failed to delete travel package.');
+          if (activeTab === 'tours') {
+            await deleteTourPlan(String(id)).unwrap();
+          } else {
+            await deleteCabPlan(String(id)).unwrap();
+          }
+          toast.success(`${entityName} deleted successfully.`);
+        } catch (error: any) {
+          toast.error(error?.data?.message || error?.message || `Failed to delete ${entityName}.`);
         }
       }
     },
-    [deleteTourPlan]
+    [activeTab, deleteTourPlan, deleteCabPlan]
   );
 
+  // Table Columns
   const planColumns: Column<any>[] = useMemo(
     () => [
       {
@@ -107,7 +203,9 @@ export const ManagePlans = () => {
             src={
               p.photo ||
               p.coverImage ||
-              'https://images.unsplash.com/photo-1599661046289-e31897846e41'
+              (activeTab === 'tours'
+                ? 'https://images.unsplash.com/photo-1599661046289-e31897846e41'
+                : 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2')
             }
             alt={p.title || p.packageName}
             className="h-10 w-16 rounded border border-zinc-800 object-cover"
@@ -115,25 +213,27 @@ export const ManagePlans = () => {
         ),
       },
       {
-        header: 'Package Details',
+        header: 'Package / Route Details',
         render: (p: any) => (
           <div className="max-w-xs space-y-1">
             <div className="truncate leading-tight font-bold text-white">
               {p.title || p.packageName}
             </div>
-            <div className="truncate text-[10px] text-zinc-400">{p.description}</div>
+            <div className="truncate text-[10px] text-zinc-400">
+              {p.description || p.packageDescription || 'No description provided'}
+            </div>
           </div>
         ),
       },
       {
-        header: 'Location & Duration',
+        header: 'Route & Duration',
         render: (p: any) => (
           <div className="space-y-0.5 text-xs text-zinc-400">
             <div className="flex items-center gap-1 font-semibold text-amber-400">
               <LuMapPin size={10} /> {p.destination || p.tripRoute}
             </div>
             <div className="flex items-center gap-1">
-              <LuClock size={10} /> {p.duration || `${p.days} Days / ${p.nights} Nights`}
+              <LuClock size={10} /> {p.duration || `${p.days || 1} Days / ${p.nights || 0} Nights`}
             </div>
           </div>
         ),
@@ -151,15 +251,15 @@ export const ManagePlans = () => {
         render: (p: any) => (
           <div className="flex items-center gap-2">
             <button
-              onClick={() => openEditModal(p)}
-              className="bg-zinc-850 cursor-pointer rounded border border-zinc-800 p-1.5 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
+              onClick={() => openEditDrawer(p)}
+              className="cursor-pointer rounded border border-zinc-800 bg-zinc-900 p-1.5 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
               title="Edit"
             >
               <LuPen size={13} />
             </button>
             <button
               onClick={() => handleDelete(p.id || p._id)}
-              className="bg-zinc-850 text-zinc-450 cursor-pointer rounded border border-zinc-800 p-1.5 transition-colors hover:bg-red-500/15 hover:text-red-400"
+              className="cursor-pointer rounded border border-zinc-800 bg-zinc-900 p-1.5 text-zinc-400 transition-colors hover:bg-red-500/15 hover:text-red-400"
               title="Delete"
             >
               <LuTrash2 size={13} />
@@ -168,186 +268,213 @@ export const ManagePlans = () => {
         ),
       },
     ],
-    [openEditModal, handleDelete]
+    [activeTab, openEditDrawer, handleDelete]
   );
+
+  const activeData = activeTab === 'tours' ? tourPlans : cabPlans;
 
   return (
     <div className="animate-in space-y-8">
       {/* Header */}
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-2xl font-black text-white">Travel Plans & Places</h1>
+          <h1 className="text-2xl font-black text-white">Travel & Cab Plans Management</h1>
           <p className="mt-1 text-xs text-zinc-400">
-            Manage packages, prices, route details, and customer itinerary options.
+            Manage holiday packages, pricing, cab routes, itineraries, and terms.
           </p>
         </div>
         <button
-          onClick={openAddModal}
+          onClick={openAddDrawer}
           className="flex cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-amber-400 px-4 py-2.5 text-xs font-bold text-zinc-950 shadow-lg shadow-amber-400/10 transition-colors hover:bg-amber-300"
         >
-          <LuPlus size={16} /> Create Tour Package
+          <LuPlus size={16} /> {activeTab === 'tours' ? 'Create Tour Package' : 'Add Cab Trip Plan'}
+        </button>
+      </div>
+
+      {/* Tab Switcher */}
+      <div className="flex items-center gap-3 border-b border-zinc-800 pb-3">
+        <button
+          type="button"
+          onClick={() => setActiveTab('tours')}
+          className={`flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${activeTab === 'tours'
+              ? 'bg-amber-400 text-zinc-950 shadow-md'
+              : 'border border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-white'
+            }`}
+        >
+          <LuCompass size={14} /> Tour Packages ({tourPlans.length})
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('cabs')}
+          className={`flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${activeTab === 'cabs'
+              ? 'bg-amber-400 text-zinc-950 shadow-md'
+              : 'border border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-white'
+            }`}
+        >
+          <LuCar size={14} /> Cab Trip Plans ({cabPlans.length})
         </button>
       </div>
 
       <Table
-        data={plans}
-        keyFn={(row: any) => row.id || row._id}
-        emptyMessage="No travel packages listed. Click 'Create Tour Package' to seed your destinations."
+        data={activeData}
+        keyFn={(row: any) => String(row.id || row._id)}
+        emptyMessage={`No ${activeTab === 'tours' ? 'tour packages' : 'cab plans'} listed. Click 'Create' to add your first plan.`}
         columns={planColumns}
       />
 
-      {/* ── Add / Edit Tour Plan Modal ── */}
-      {showModal && (
-        <div className="animate-in fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 p-4 backdrop-blur-sm">
-          <div className="relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-zinc-800/80 px-6 py-4">
-              <h3 className="text-base font-bold text-white">
-                {editingPlan ? 'Edit Tour Destination Details' : 'Create New Tour Destination'}
-              </h3>
-              <button
-                onClick={() => setShowModal(false)}
-                className="cursor-pointer rounded bg-zinc-800 p-1 text-zinc-400 hover:bg-zinc-700 hover:text-white"
-              >
-                <LuX size={18} />
-              </button>
-            </div>
-
-            <Formik
-              initialValues={
-                editingPlan
-                  ? {
-                      title: editingPlan.title || editingPlan.packageName || '',
-                      destination: editingPlan.destination || editingPlan.tripRoute || '',
-                      duration:
-                        editingPlan.duration ||
-                        `${editingPlan.days || 3} Days / ${editingPlan.nights || 2} Nights`,
-                      price: editingPlan.price || editingPlan.pricePerPerson || 10000,
-                      photo:
-                        editingPlan.photo || editingPlan.coverImage || TOUR_PHOTO_PRESETS[0].url,
-                      description: editingPlan.description || '',
-                      highlights: editingPlan.highlights || [],
-                      inclusions: editingPlan.inclusions || [],
-                    }
-                  : {
-                      title: '',
-                      destination: '',
-                      duration: '3 Days / 2 Nights',
-                      price: 10000,
-                      photo: TOUR_PHOTO_PRESETS[0].url,
-                      description: '',
-                      highlights: [],
-                      inclusions: ['AC Coach Travel', 'Hotel Stay', 'Meals Included'],
-                    }
+      {/* ── Add / Edit Plan Drawer ── */}
+      <AdminDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        title={
+          editingItem
+            ? `Edit ${activeTab === 'tours' ? 'Tour Destination' : 'Cab Route'} Details`
+            : `Create New ${activeTab === 'tours' ? 'Tour Destination' : 'Cab Route'}`
+        }
+        subtitle={
+          editingItem
+            ? 'Update itinerary, duration, and pricing'
+            : 'Configure routes, pricing, and package inclusions'
+        }
+        maxWidth="max-w-2xl"
+      >
+        <Formik
+          initialValues={
+            editingItem
+              ? {
+                title: editingItem.title || editingItem.packageName || '',
+                destination: editingItem.destination || editingItem.tripRoute || '',
+                days: editingItem.days || 3,
+                nights: editingItem.nights !== undefined ? editingItem.nights : 2,
+                duration: editingItem.duration || '',
+                price: editingItem.price || editingItem.pricePerPerson || 5000,
+                photo:
+                  editingItem.photo ||
+                  editingItem.coverImage ||
+                  (activeTab === 'tours' ? TOUR_PHOTO_PRESETS[0].url : CAB_PHOTO_PRESETS[0].url),
+                description: editingItem.description || editingItem.packageDescription || '',
+                withDriver: editingItem.withDriver ?? true,
+                highlights: editingItem.highlights || [],
+                inclusions: editingItem.inclusions || [],
               }
-              onSubmit={handleSubmit}
-            >
-              {({ values, setFieldValue }) => (
-                <Form className="flex-grow space-y-4 overflow-y-auto p-6 text-xs text-zinc-300">
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <FormikInput
-                      name="title"
-                      label="Package Title"
-                      placeholder="Agra Heritage Weekend Trip"
-                      required
-                    />
+              : {
+                title: '',
+                destination: '',
+                days: activeTab === 'tours' ? 3 : 1,
+                nights: activeTab === 'tours' ? 2 : 0,
+                duration: activeTab === 'tours' ? '3 Days / 2 Nights' : 'One Way / Round Trip',
+                price: activeTab === 'tours' ? 10000 : 4500,
+                photo: activeTab === 'tours' ? TOUR_PHOTO_PRESETS[0].url : CAB_PHOTO_PRESETS[0].url,
+                description: '',
+                withDriver: true,
+                highlights: [],
+                inclusions:
+                  activeTab === 'tours'
+                    ? ['AC Coach Travel', 'Hotel Stay', 'Meals Included']
+                    : ['Fuel charges', 'Driver allowances', 'GST'],
+              }
+          }
+          onSubmit={handleSubmit}
+          enableReinitialize
+        >
+          {({ values, setFieldValue }) => (
+            <Form className="space-y-5 text-xs text-zinc-300">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <FormikInput
+                  name="title"
+                  label={activeTab === 'tours' ? 'Package Title' : 'Cab Service Title'}
+                  placeholder={activeTab === 'tours' ? 'Agra Heritage Weekend Trip' : 'Surat to Mumbai Cab Service'}
+                  required
+                />
 
-                    <FormikInput
-                      name="destination"
-                      label="Destination"
-                      placeholder="Delhi - Agra - Delhi"
-                      required
-                    />
-                  </div>
+                <FormikInput
+                  name="destination"
+                  label={activeTab === 'tours' ? 'Destination' : 'Route / Trip Destination'}
+                  placeholder={activeTab === 'tours' ? 'Delhi - Agra - Delhi' : 'Mumbai / Surat'}
+                  required
+                />
+              </div>
 
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <FormikInput
-                      name="duration"
-                      label="Duration"
-                      placeholder="3 Days / 2 Nights"
-                      required
-                    />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <FormikInput
+                  name="days"
+                  type="number"
+                  label="Days"
+                  min={1}
+                  required
+                />
 
-                    <FormikInput
-                      name="price"
-                      type="number"
-                      label="Package Price (INR)"
-                      min={1}
-                      required
-                    />
-                  </div>
+                <FormikInput
+                  name="nights"
+                  type="number"
+                  label="Nights"
+                  min={0}
+                  required
+                />
 
-                  {/* Photo selector */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-zinc-455 block text-sm font-semibold">
-                        Cover Image URL *
-                      </span>
-                      <span className="text-[10px] text-amber-400">Or pick a tour preset</span>
-                    </div>
-                    <FormikInput
-                      name="photo"
-                      placeholder="https://images.unsplash.com/..."
-                      required
-                    />
-                    <div className="flex gap-2 overflow-x-auto py-1">
-                      {TOUR_PHOTO_PRESETS.map((preset, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => setFieldValue('photo', preset.url)}
-                          className={`bg-zinc-850 cursor-pointer rounded border px-3 py-1 text-[10px] font-semibold hover:bg-zinc-800 ${
-                            values.photo === preset.url
-                              ? 'border-amber-400 text-amber-400'
-                              : 'border-zinc-800 text-zinc-400'
-                          }`}
-                        >
-                          {preset.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                <FormikInput
+                  name="price"
+                  type="number"
+                  label={activeTab === 'tours' ? 'Price Per Person (INR)' : 'Trip Price (INR)'}
+                  min={1}
+                  required
+                />
+              </div>
 
-                  <FormikTagsInput
-                    name="highlights"
-                    label="Tour Highlights"
-                    placeholder="e.g. Taj Mahal sunrise view"
-                  />
+              <FormikInput
+                name="duration"
+                label="Duration Label"
+                placeholder="e.g. 3 Days / 2 Nights or One Way / Round Trip"
+              />
 
-                  <FormikTagsInput
-                    name="inclusions"
-                    label="Package Inclusions"
-                    placeholder="e.g. 3-star Hotel stay"
-                  />
+              {/* Image Upload Field */}
+              <ImageUploadField
+                name="photo"
+                label="Cover Image Photo"
+                value={values.photo}
+                onChange={url => setFieldValue('photo', url)}
+                presets={activeTab === 'tours' ? TOUR_PHOTO_PRESETS : CAB_PHOTO_PRESETS}
+                required
+              />
 
-                  <FormikTextarea
-                    name="description"
-                    label="Package Description"
-                    rows={3}
-                    placeholder="Provide package summary, brief daily route planner, or target audience..."
-                    required
-                  />
+              <FormikTagsInput
+                name="highlights"
+                label="Highlights & Key Features"
+                placeholder="e.g. Sanitized cabs, Expert drivers"
+              />
 
-                  <div className="flex items-center justify-end gap-3 border-t border-zinc-800/80 pt-4">
-                    <button
-                      type="button"
-                      onClick={() => setShowModal(false)}
-                      className="cursor-pointer rounded-xl border border-zinc-800 px-4 py-2 font-semibold hover:bg-zinc-800"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="cursor-pointer rounded-xl bg-amber-400 px-5 py-2 font-bold text-zinc-950 hover:bg-amber-300"
-                    >
-                      {editingPlan ? 'Save Changes' : 'Create Package'}
-                    </button>
-                  </div>
-                </Form>
-              )}
-            </Formik>
-          </div>
-        </div>
-      )}
+              <FormikTagsInput
+                name="inclusions"
+                label="Package Inclusions"
+                placeholder="e.g. Tolls, Fuel, Driver stay"
+              />
+
+              <FormikTextarea
+                name="description"
+                label="Description & Terms"
+                rows={3}
+                placeholder="Provide details about route pickup, terms, cancellation, or itinerary schedule..."
+              />
+
+              <div className="flex items-center justify-end gap-3 border-t border-zinc-800/80 pt-5">
+                <button
+                  type="button"
+                  onClick={() => setIsDrawerOpen(false)}
+                  className="cursor-pointer rounded-xl border border-zinc-800 px-4 py-2.5 font-semibold text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="cursor-pointer rounded-xl bg-amber-400 px-5 py-2.5 font-bold text-zinc-950 shadow-lg shadow-amber-400/10 hover:bg-amber-300"
+                >
+                  {editingItem ? 'Save Changes' : 'Create Package'}
+                </button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </AdminDrawer>
     </div>
   );
 };
