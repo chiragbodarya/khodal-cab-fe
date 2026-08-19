@@ -344,14 +344,11 @@ export const ManagePlans = () => {
               ? {
                 title: editingItem.title || editingItem.packageName || '',
                 destination: editingItem.destination || editingItem.tripRoute || '',
-                days: editingItem.days || 3,
-                nights: editingItem.nights !== undefined ? editingItem.nights : 2,
+                days: editingItem.days !== undefined ? editingItem.days : '',
+                nights: editingItem.nights !== undefined ? editingItem.nights : '',
                 duration: editingItem.duration || '',
-                price: editingItem.price || editingItem.pricePerPerson || 5000,
-                photo:
-                  editingItem.photo ||
-                  editingItem.coverImage ||
-                  (activeTab === 'tours' ? TOUR_PHOTO_PRESETS[0].url : CAB_PHOTO_PRESETS[0].url),
+                price: editingItem.price || editingItem.pricePerPerson || '',
+                photo: editingItem.photo || editingItem.coverImage || '',
                 description: editingItem.description || editingItem.packageDescription || '',
                 withDriver: editingItem.withDriver ?? true,
                 highlights: editingItem.highlights || [],
@@ -360,18 +357,15 @@ export const ManagePlans = () => {
               : {
                 title: '',
                 destination: '',
-                days: activeTab === 'tours' ? 3 : 1,
-                nights: activeTab === 'tours' ? 2 : 0,
-                duration: activeTab === 'tours' ? '3 Days / 2 Nights' : 'One Way / Round Trip',
-                price: activeTab === 'tours' ? 10000 : 4500,
-                photo: activeTab === 'tours' ? TOUR_PHOTO_PRESETS[0].url : CAB_PHOTO_PRESETS[0].url,
+                days: '',
+                nights: '',
+                duration: '',
+                price: '',
+                photo: '',
                 description: '',
                 withDriver: true,
                 highlights: [],
-                inclusions:
-                  activeTab === 'tours'
-                    ? ['AC Coach Travel', 'Hotel Stay', 'Meals Included']
-                    : ['Fuel charges', 'Driver allowances', 'GST'],
+                inclusions: [],
               }
           }
           onSubmit={handleSubmit}
@@ -400,6 +394,7 @@ export const ManagePlans = () => {
                   name="days"
                   type="number"
                   label="Days"
+                  placeholder="e.g. 3"
                   min={1}
                   required
                 />
@@ -408,6 +403,7 @@ export const ManagePlans = () => {
                   name="nights"
                   type="number"
                   label="Nights"
+                  placeholder="e.g. 2"
                   min={0}
                   required
                 />
@@ -416,6 +412,7 @@ export const ManagePlans = () => {
                   name="price"
                   type="number"
                   label={activeTab === 'tours' ? 'Price Per Person (INR)' : 'Trip Price (INR)'}
+                  placeholder={activeTab === 'tours' ? 'e.g. 8500' : 'e.g. 3500'}
                   min={1}
                   required
                 />

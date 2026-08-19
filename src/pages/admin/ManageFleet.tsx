@@ -228,20 +228,20 @@ export const ManageFleet = () => {
               ? {
                 name: editingVehicle.name || '',
                 type: editingVehicle.type || editingVehicle.category || 'bus',
-                capacity: editingVehicle.capacity || editingVehicle.seatCapacity || 36,
+                capacity: editingVehicle.capacity || editingVehicle.seatCapacity || '',
                 description: editingVehicle.description || '',
-                photo: editingVehicle.photo || editingVehicle.imageUrl || (editingVehicle.images && editingVehicle.images[0]) || '',
+                photo: editingVehicle.photo || editingVehicle.imageUrl || editingVehicle.image || editingVehicle.coverImage || (Array.isArray(editingVehicle.images) ? editingVehicle.images[0] : (typeof editingVehicle.images === 'string' ? editingVehicle.images : '')) || '',
                 amenities: editingVehicle.amenities || editingVehicle.features || [],
-                ratePerKm: editingVehicle.ratePerKm || editingVehicle.pricePerKm || 40,
+                ratePerKm: editingVehicle.ratePerKm || editingVehicle.pricePerKm || '',
               }
               : {
                 name: '',
                 type: 'bus',
-                capacity: 36,
+                capacity: '',
                 description: '',
-                photo: MOCK_PHOTO_PRESETS[0].url,
-                amenities: ['AC', 'Wi-Fi', 'GPS'],
-                ratePerKm: 40,
+                photo: '',
+                amenities: [],
+                ratePerKm: '',
               }
           }
           onSubmit={handleSubmit}
@@ -276,6 +276,7 @@ export const ManageFleet = () => {
                   name="capacity"
                   type="number"
                   label="Seat Capacity"
+                  placeholder="e.g. 36 or 7"
                   min={1}
                   required
                 />
@@ -284,6 +285,7 @@ export const ManageFleet = () => {
                   name="ratePerKm"
                   type="number"
                   label="Rate Per KM (INR)"
+                  placeholder="e.g. 45"
                   min={1}
                   required
                 />

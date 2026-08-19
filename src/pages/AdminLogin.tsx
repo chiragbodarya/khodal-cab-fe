@@ -79,7 +79,7 @@ export const AdminLogin = () => {
 
         {/* Login Form */}
         <Formik
-          initialValues={{ email: 'admin@khodeltravels.com', password: 'admin123' }}
+          initialValues={{ email: '', password: '' }}
           onSubmit={handleLogin}
         >
           {() => (
@@ -88,7 +88,7 @@ export const AdminLogin = () => {
                 name="email"
                 type="email"
                 label="Email Address"
-                placeholder="admin@khodeltravels.com"
+                placeholder="Enter your email"
                 icon={<LuMail size={16} />}
                 required
                 className="!bg-zinc-955 !rounded-xl !py-3.5"
@@ -103,13 +103,6 @@ export const AdminLogin = () => {
                 required
                 className="!bg-zinc-955 !rounded-xl !py-3.5"
               />
-
-              {/* Demo Credentials Alert */}
-              <div className="rounded-xl border border-amber-400/10 bg-amber-400/5 p-3.5 text-[11px] leading-relaxed font-light text-amber-300/80">
-                <strong>Demo Credentials:</strong> <br />
-                Email: <code className="text-white">admin@khodeltravels.com</code> <br />
-                Password: <code className="text-white">admin123</code>
-              </div>
 
               <button
                 type="submit"

@@ -194,13 +194,13 @@ export const ManageGallery = () => {
             editingItem
               ? {
                 title: editingItem.title || '',
-                imageUrl: editingItem.imageUrl || editingItem.photo || '',
+                imageUrl: editingItem.imageUrl || editingItem.photo || editingItem.image || editingItem.coverImage || (Array.isArray(editingItem.images) ? editingItem.images[0] : (typeof editingItem.images === 'string' ? editingItem.images : '')) || '',
                 category: editingItem.category || 'bus',
                 location: editingItem.location || '',
               }
               : {
                 title: '',
-                imageUrl: GALLERY_PHOTO_PRESETS[0].url,
+                imageUrl: '',
                 category: 'bus',
                 location: '',
               }

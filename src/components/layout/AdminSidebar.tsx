@@ -3,13 +3,15 @@ import { NavLink, useNavigate, Link } from 'react-router-dom';
 import {
   LuLayoutDashboard,
   LuBus,
-  LuMapPin,
   LuFileText,
   LuLogOut,
   LuChevronLeft,
   LuChevronRight,
   LuArrowLeft,
   LuImage,
+  LuShieldCheck,
+  LuCompass,
+  LuCar,
 } from 'react-icons/lu';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { logout } from '../../redux/slices/authSlice';
@@ -27,19 +29,21 @@ export const AdminSidebar = () => {
 
   const navItems = [
     { label: 'Dashboard', path: '/backstage/dashboard', Icon: LuLayoutDashboard },
-    { label: 'Manage Vehicles', path: '/backstage/fleet', Icon: LuBus },
-    { label: 'Manage Plans', path: '/backstage/plans', Icon: LuMapPin },
-    { label: 'Manage Blogs', path: '/backstage/blogs', Icon: LuFileText },
-    { label: 'Manage Gallery', path: '/backstage/gallery', Icon: LuImage },
+    { label: 'Vehicles', path: '/backstage/fleet', Icon: LuBus },
+    { label: 'Tour Packages', path: '/backstage/tours', Icon: LuCompass },
+    { label: 'Cab Trip Plans', path: '/backstage/cabs', Icon: LuCar },
+    { label: 'Blogs', path: '/backstage/blogs', Icon: LuFileText },
+    { label: 'Gallery', path: '/backstage/gallery', Icon: LuImage },
+    { label: 'Admins', path: '/backstage/admins', Icon: LuShieldCheck },
   ];
 
   const initials = user?.name
     ? user.name
-        .split(' ')
-        .map(n => n[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2)
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2)
     : 'A';
 
   return (
@@ -89,10 +93,9 @@ export const AdminSidebar = () => {
             end={path === '/backstage/dashboard'}
             title={collapsed ? label : undefined}
             className={({ isActive }) =>
-              `group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${collapsed ? 'justify-center' : ''} ${
-                isActive
-                  ? 'bg-amber-400/8 text-amber-400'
-                  : 'text-zinc-500 hover:bg-zinc-900 hover:text-white'
+              `group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${collapsed ? 'justify-center' : ''} ${isActive
+                ? 'bg-amber-400/8 text-amber-400'
+                : 'text-zinc-500 hover:bg-zinc-900 hover:text-white'
               }`
             }
           >

@@ -218,17 +218,17 @@ export const ManageBlogs = () => {
                 title: editingBlog.title || '',
                 excerpt: editingBlog.excerpt || '',
                 content: editingBlog.content || '',
-                author: editingBlog.author || 'Admin',
-                photo: editingBlog.photo || editingBlog.coverImage || BLOG_PHOTO_PRESETS[0].url,
+                author: editingBlog.author || '',
+                photo: editingBlog.photo || editingBlog.coverImage || editingBlog.imageUrl || editingBlog.image || (Array.isArray(editingBlog.images) ? editingBlog.images[0] : (typeof editingBlog.images === 'string' ? editingBlog.images : '')) || '',
                 tags: editingBlog.tags || [],
               }
               : {
                 title: '',
                 excerpt: '',
                 content: '',
-                author: 'Admin',
-                photo: BLOG_PHOTO_PRESETS[0].url,
-                tags: ['Travel Guides', 'Road Trip'],
+                author: '',
+                photo: '',
+                tags: [],
               }
           }
           onSubmit={handleSubmit}
@@ -244,7 +244,12 @@ export const ManageBlogs = () => {
                   required
                 />
 
-                <FormikInput name="author" label="Author" required />
+                <FormikInput
+                  name="author"
+                  label="Author"
+                  placeholder="e.g. Editorial Team or Admin"
+                  required
+                />
               </div>
 
               {/* Enhanced Image Upload Field */}
