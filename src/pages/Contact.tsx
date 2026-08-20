@@ -11,16 +11,17 @@ export const Contact = () => {
   const handleSubmit = async (values: any, { resetForm }: any) => {
     try {
       await createInquiry({
-        name: values.name,
-        email: values.email,
-        phone: values.phone,
-        message: values.message,
+        type: 'CONTACT_US',
+        name: values.name.trim(),
+        email: values.email?.trim() || undefined,
+        phone: values.phone.trim(),
+        message: values.message?.trim() || undefined,
       }).unwrap();
 
       toast.success('Message sent! Our support team will get back to you shortly.');
       resetForm();
-    } catch (error) {
-      toast.error('Failed to send message. Please try again.');
+    } catch (error: any) {
+      toast.error(error?.data?.message || error?.message || 'Failed to send message. Please try again.');
     }
   };
 

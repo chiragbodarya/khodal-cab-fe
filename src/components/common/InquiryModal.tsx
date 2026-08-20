@@ -8,11 +8,11 @@ import {
 } from '@mui/material';
 import { LuX, LuSend, LuMapPin, LuCar, LuCompass, LuSparkles } from 'react-icons/lu';
 import toast from 'react-hot-toast';
-import { useCreateInquiryMutation } from '../../redux/slices/inquiryApiSlice';
+import { useCreateInquiryMutation, type InquiryType } from '../../redux/slices/inquiryApiSlice';
 import { FormikInput, FormikTextarea } from './formik';
 
 export interface InquiryItem {
-  id?: string;
+  id?: string | number;
   title: string;
   subtitle?: string;
   type?: 'tour' | 'cab' | 'vehicle' | 'general';
@@ -21,6 +21,8 @@ export interface InquiryItem {
   capacity?: number | string;
   duration?: string;
   destination?: string;
+  pickupLocation?: string;
+  dropLocation?: string;
 }
 
 interface InquiryModalProps {
@@ -32,25 +34,53 @@ interface InquiryModalProps {
 export const InquiryModal = ({ isOpen, onClose, item }: InquiryModalProps) => {
   const [createInquiry, { isLoading }] = useCreateInquiryMutation();
 
+  const resolveInquiryType = (): InquiryType => {
+    switch (item?.type) {
+      case 'vehicle':
+        return 'VEHICLE';
+      case 'cab':
+        return 'CAB_PLAN';
+      case 'tour':
+        return 'TOUR_PLAN';
+      default:
+        return 'CONTACT_US';
+    }
+  };
+
   const handleSubmit = async (values: any, { resetForm }: any) => {
-    const details = [];
-    if (values.travelDate) details.push(`Travel Date: ${values.travelDate}`);
-    if (values.passengers) details.push(`Passengers: ${values.passengers}`);
-    if (item?.duration) details.push(`Duration: ${item.duration}`);
-    if (item?.capacity) details.push(`Capacity: ${item.capacity} Seats`);
-    if (item?.price) details.push(`Estimated Price/Rate: ₹${item.price}`);
-    if (values.message) details.push(`Message: ${values.message}`);
+    const inquiryType = resolveInquiryType();
+    const rawId = item?.id ? Number(item.id) : undefined;
+    const numericId = rawId && !isNaN(rawId) && rawId > 0 ? rawId : undefined;
 
-    const compiledMessage = details.join(' | ');
-
-    const payload = {
-      name: values.name,
-      email: values.email,
-      phone: values.phone,
-      planId: item?.id || '',
-      planTitle: item?.title || 'General Inquiry',
-      message: compiledMessage,
+    const payload: any = {
+      type: inquiryType,
+      name: values.name.trim(),
+      phone: values.phone.trim(),
+      email: values.email?.trim() || undefined,
+      message: values.message?.trim() || undefined,
+      pickupLocation: values.pickupLocation?.trim() || undefined,
+      dropLocation: values.dropLocation?.trim() || item?.destination || undefined,
+      passengers: values.passengers ? Number(values.passengers) : undefined,
     };
+
+    if (values.travelDate) {
+      payload.travelDate = new Date(values.travelDate).toISOString();
+    }
+    if (values.returnDate) {
+      payload.returnDate = new Date(values.returnDate).toISOString();
+    }
+
+    if (inquiryType === 'VEHICLE' && numericId) {
+      payload.vehicleId = numericId;
+    } else if (inquiryType === 'CAB_PLAN' && numericId) {
+      payload.cabPlanId = numericId;
+    } else if (inquiryType === 'TOUR_PLAN' && numericId) {
+      payload.tourPlanId = numericId;
+    }
+
+    // Include plan identifier & title for backwards compatibility
+    payload.planId = item?.id || undefined;
+    payload.planTitle = item?.title || undefined;
 
     try {
       await createInquiry(payload).unwrap();
@@ -171,8 +201,11 @@ export const InquiryModal = ({ isOpen, onClose, item }: InquiryModalProps) => {
           name: '',
           phone: '',
           email: '',
+          pickupLocation: item?.pickupLocation || '',
+          dropLocation: item?.dropLocation || item?.destination || '',
           travelDate: '',
-          passengers: '',
+          returnDate: '',
+          passengers: item?.capacity ? String(item.capacity).replace(/[^0-9]/g, '') : '',
           message: '',
         }}
         onSubmit={handleSubmit}
@@ -184,14 +217,14 @@ export const InquiryModal = ({ isOpen, onClose, item }: InquiryModalProps) => {
                 <FormikInput
                   name="name"
                   label="Your Full Name"
-                  placeholder="e.g. Rahul Sharma"
+                  placeholder="e.g. Rajesh Patel"
                   required
                 />
                 <FormikInput
                   name="phone"
                   type="tel"
                   label="Contact Phone Number"
-                  placeholder="e.g. +91 98765 43210"
+                  placeholder="e.g. 9876543210"
                   required
                 />
               </div>
@@ -201,29 +234,48 @@ export const InquiryModal = ({ isOpen, onClose, item }: InquiryModalProps) => {
                   name="email"
                   type="email"
                   label="Email Address"
-                  placeholder="e.g. rahul@example.com"
-                  required
+                  placeholder="e.g. rajesh@example.com"
                 />
                 <FormikInput
-                  name="travelDate"
-                  type="date"
-                  label="Preferred Travel Date"
+                  name="passengers"
+                  type="number"
+                  label="Total Passengers"
+                  placeholder="e.g. 4 or 35"
+                  min={1}
                 />
               </div>
 
-              <FormikInput
-                name="passengers"
-                type="number"
-                label="Number of Travelers / Passengers"
-                placeholder="e.g. 4 or 35"
-                min={1}
-              />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <FormikInput
+                  name="pickupLocation"
+                  label="Pickup Location / City"
+                  placeholder="e.g. Surat"
+                />
+                <FormikInput
+                  name="dropLocation"
+                  label="Drop Destination / City"
+                  placeholder="e.g. Mumbai / Somnath"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <FormikInput
+                  name="travelDate"
+                  type="date"
+                  label="Start Travel Date"
+                />
+                <FormikInput
+                  name="returnDate"
+                  type="date"
+                  label="Return Date (Optional)"
+                />
+              </div>
 
               <FormikTextarea
                 name="message"
                 label="Special Requests / Custom Itinerary"
                 rows={3}
-                placeholder="Mention pickup point, drop location, hotel preferences, or any specific requirements..."
+                placeholder="Mention AC requirements, specific pickup timing, luggage details, or stops..."
               />
             </DialogContent>
 
