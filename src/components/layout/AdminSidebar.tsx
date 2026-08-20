@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { NavLink, useNavigate, Link } from 'react-router-dom';
 import {
   LuLayoutDashboard,
+  LuInbox,
   LuBus,
   LuFileText,
   LuLogOut,
@@ -29,6 +30,7 @@ export const AdminSidebar = () => {
 
   const navItems = [
     { label: 'Dashboard', path: '/backstage/dashboard', Icon: LuLayoutDashboard },
+    { label: 'Inquiries', path: '/backstage/inquiries', Icon: LuInbox },
     { label: 'Vehicles', path: '/backstage/fleet', Icon: LuBus },
     { label: 'Tour Packages', path: '/backstage/tours', Icon: LuCompass },
     { label: 'Cab Trip Plans', path: '/backstage/cabs', Icon: LuCar },

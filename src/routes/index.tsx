@@ -8,6 +8,7 @@ import { Contact } from '../pages/Contact';
 import { Gallery } from '../pages/Gallery';
 import { AdminLogin } from '../pages/AdminLogin';
 import { Dashboard as AdminDashboard } from '../pages/admin/Dashboard';
+import { ManageInquiries } from '../pages/admin/ManageInquiries';
 import { ManageFleet } from '../pages/admin/ManageFleet';
 import { ManageTours } from '../pages/admin/ManageTours';
 import { ManageCabs } from '../pages/admin/ManageCabs';
@@ -56,6 +57,10 @@ export const router = createBrowserRouter([
       {
         path: '/backstage/dashboard',
         element: <AdminDashboard />,
+      },
+      {
+        path: '/backstage/inquiries',
+        element: <ManageInquiries />,
       },
       {
         path: '/backstage/fleet',
