@@ -46,7 +46,7 @@ export interface Inquiry {
   status: 'pending' | 'responded';
 }
 
-const DEFAULT_VEHICLES: Vehicle[] = [
+export const DEFAULT_VEHICLES: Vehicle[] = [
   {
     id: 'v1',
     name: 'Luxury Multi-Axle Volvo AC Sleeper',

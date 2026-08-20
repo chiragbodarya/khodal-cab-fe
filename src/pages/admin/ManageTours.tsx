@@ -238,8 +238,8 @@ export const ManageTours = () => {
           isLoading
             ? 'Loading tour packages...'
             : searchQuery
-            ? 'No tour packages match your search.'
-            : "No tour packages listed. Click 'Create Tour Package' to add your first package."
+              ? 'No tour packages match your search.'
+              : "No tour packages listed. Click 'Create Tour Package' to add your first package."
         }
         columns={columns}
       />

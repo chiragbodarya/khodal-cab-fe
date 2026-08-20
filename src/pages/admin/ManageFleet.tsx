@@ -113,20 +113,35 @@ export const ManageFleet = () => {
     () => [
       {
         header: 'Photo',
-        render: (v: any) => (
-          <img
-            src={v.photo || v.imageUrl || (v.images && v.images[0]) || 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957'}
-            alt={v.name}
-            className="h-10 w-16 rounded border border-zinc-800 object-cover"
-          />
-        ),
+        render: (v: any) => {
+          const photoUrl =
+            v.photo ||
+            v.imageUrl ||
+            v.image ||
+            v.coverImage ||
+            (Array.isArray(v.images) ? v.images[0] : v.images) ||
+            'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957';
+          return (
+            <img
+              src={photoUrl}
+              alt={v.name || 'Vehicle'}
+              onError={(e: any) => {
+                e.currentTarget.src =
+                  'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80';
+              }}
+              className="h-10 w-16 rounded border border-zinc-800 object-cover"
+            />
+          );
+        },
       },
       {
         header: 'Vehicle Details',
         render: (v: any) => (
           <div className="max-w-xs space-y-1">
-            <div className="truncate leading-tight font-bold text-white">{v.name}</div>
-            <div className="truncate text-[10px] text-zinc-400">{v.description || 'No description provided'}</div>
+            <div className="truncate leading-tight font-bold text-white">{v.name || 'Vehicle'}</div>
+            <div className="truncate text-[10px] text-zinc-400">
+              {v.description || v.desc || 'No description provided'}
+            </div>
           </div>
         ),
       },
@@ -137,31 +152,43 @@ export const ManageFleet = () => {
             <div className="flex items-center gap-1 text-[10px] font-semibold text-amber-400 uppercase">
               {v.type || v.category || 'Bus'}
             </div>
-            <div className="flex items-center gap-1">
-              <LuUsers size={10} /> {v.capacity || v.seatCapacity || 4} Seater
+            <div className="flex items-center gap-1 text-xs">
+              <LuUsers size={12} className="text-amber-400" />{' '}
+              <span className="text-sm font-bold text-white">
+                {v.capacity || v.seatCapacity || v.seats || 4}
+              </span>{' '}
+              <span className="text-zinc-400">Seater</span>
             </div>
           </div>
         ),
       },
       {
         header: 'Amenities / Features',
-        render: (v: any) => (
-          <div className="flex max-w-[150px] flex-wrap gap-1">
-            {(v.amenities || v.features || []).map((item: string, idx: number) => (
-              <span
-                key={idx}
-                className="rounded border border-zinc-800 bg-zinc-950 px-1.5 py-0.5 text-[9px] font-medium text-zinc-300"
-              >
-                {item}
-              </span>
-            ))}
-          </div>
-        ),
+        render: (v: any) => {
+          let list = v.amenities || v.features || [];
+          if (typeof list === 'string') {
+            list = list.split(',').map((s: string) => s.trim()).filter(Boolean);
+          }
+          return (
+            <div className="flex max-w-[150px] flex-wrap gap-1">
+              {(list || []).map((item: string, idx: number) => (
+                <span
+                  key={idx}
+                  className="rounded border border-zinc-800 bg-zinc-950 px-1.5 py-0.5 text-[9px] font-medium text-zinc-300"
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
+          );
+        },
       },
       {
         header: 'Rate',
         render: (v: any) => (
-          <div className="text-xs font-bold text-white">₹{v.ratePerKm || v.pricePerKm || 40}/km</div>
+          <div className="text-xs font-bold text-white">
+            ₹{v.ratePerKm || v.pricePerKm || v.rate || v.price || 40}/km
+          </div>
         ),
       },
       {

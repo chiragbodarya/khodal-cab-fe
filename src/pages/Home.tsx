@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { useGetTourPlansQuery } from '../redux/slices/tourApiSlice';
 import { useGetVehiclesQuery } from '../redux/slices/vehicleApiSlice';
 import { useGetBlogsQuery } from '../redux/slices/blogApiSlice';
@@ -12,19 +13,30 @@ import {
   LuCar,
   LuCheck,
   LuPhoneCall,
+  LuUsers,
 } from 'react-icons/lu';
 import { COMPANY_DETAILS, CAB_FLEET, CAB_ROUTES, CAB_SERVICES } from '../utils/constants';
+import { DEFAULT_VEHICLES } from '../utils/storage';
+import { InquiryModal, type InquiryItem } from '../components/common/InquiryModal';
 
 export const Home = () => {
+  const navigate = useNavigate();
   const { data: tourData } = useGetTourPlansQuery({ limit: 3 });
   const { data: vehicleData } = useGetVehiclesQuery({ limit: 3 });
   const { data: blogData } = useGetBlogsQuery({ limit: 2 });
 
   const featuredPlans = (tourData?.data as any[])?.slice(0, 3) || [];
-  const vehicles = (vehicleData?.data as any[])?.slice(0, 3) || [];
+  const rawVehicles = (vehicleData?.data as any[]) || [];
+  const vehicles = (rawVehicles.length > 0 ? rawVehicles : DEFAULT_VEHICLES).slice(0, 3);
   const recentBlogs = (blogData?.data as any[])?.slice(0, 2) || [];
 
-  const navigate = useNavigate();
+  const [selectedInquiryItem, setSelectedInquiryItem] = useState<InquiryItem | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenInquiry = (item: InquiryItem) => {
+    setSelectedInquiryItem(item);
+    setIsModalOpen(true);
+  };
 
   return (
     <div className="space-y-20 pb-20">
@@ -178,12 +190,31 @@ export const Home = () => {
                       ₹{((plan as any).price || plan.pricePerPerson || 0).toLocaleString('en-IN')}
                     </span>
                   </div>
-                  <Link
-                    to="/plans"
-                    className="cursor-pointer rounded-lg bg-zinc-100 px-3.5 py-2 text-xs font-bold text-zinc-700 transition-all group-hover:bg-amber-400 group-hover:text-zinc-950 dark:bg-zinc-800 dark:text-zinc-300"
-                  >
-                    Details
-                  </Link>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleOpenInquiry({
+                          id: String(plan.id || plan._id || ''),
+                          title: (plan as any).title || plan.packageName,
+                          type: 'tour',
+                          destination: (plan as any).destination || plan.tripRoute,
+                          duration: (plan as any).duration || (plan.days ? `${plan.days} Days / ${plan.nights} Nights` : undefined),
+                          price: (plan as any).price || plan.pricePerPerson || 0,
+                          photo: (plan as any).photo || plan.imageUrl,
+                        })
+                      }
+                      className="cursor-pointer rounded-lg bg-amber-400 px-3 py-1.5 text-xs font-bold text-zinc-950 shadow-sm transition-all hover:bg-amber-300"
+                    >
+                      Book Tour
+                    </button>
+                    <Link
+                      to="/plans"
+                      className="cursor-pointer rounded-lg bg-zinc-100 px-2.5 py-1.5 text-xs font-semibold text-zinc-700 transition-all hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                    >
+                      Details
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
@@ -211,54 +242,111 @@ export const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {vehicles.map(v => (
-              <div
-                key={v.id}
-                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-md transition-all hover:border-amber-400/20 dark:border-zinc-900 dark:bg-zinc-950 dark:shadow-none"
-              >
-                <div className="relative aspect-video overflow-hidden">
-                  <img
-                    src={
-                      (v as any).photo ||
-                      'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957'
-                    }
-                    alt={v.name}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-102"
-                  />
-                  <div className="absolute bottom-3 left-3 rounded bg-amber-400 px-2 py-1 text-[10px] font-bold tracking-wider text-zinc-950 uppercase">
-                    {v.type}
+            {vehicles.map((v: any, i: number) => {
+              const vehicleId = v.id || v._id || `home-veh-${i}`;
+              const photo =
+                v.photo ||
+                v.imageUrl ||
+                v.image ||
+                v.coverImage ||
+                (Array.isArray(v.images) ? v.images[0] : v.images) ||
+                'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80';
+              const type = v.type || v.category || 'Bus';
+              const name = v.name || v.title || 'Luxury Fleet Vehicle';
+              const capacity = v.capacity || v.seatCapacity || v.seats || 4;
+              const description =
+                v.description ||
+                v.desc ||
+                'Experience maximum travel comfort with our modern well-maintained fleet.';
+              const rawAmenities = v.amenities || v.features || [];
+              const amenitiesList =
+                typeof rawAmenities === 'string'
+                  ? rawAmenities.split(',').map((s: string) => s.trim()).filter(Boolean)
+                  : Array.isArray(rawAmenities) && rawAmenities.length > 0
+                  ? rawAmenities
+                  : ['AC', 'Pushback Seats', 'Luggage Space'];
+              const rate = v.ratePerKm || v.pricePerKm || v.rate || v.price;
+
+              return (
+                <div
+                  key={vehicleId}
+                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-md transition-all hover:border-amber-400/30 hover:shadow-xl dark:border-zinc-900 dark:bg-zinc-950 dark:shadow-none"
+                >
+                  <div className="relative aspect-video overflow-hidden bg-zinc-800">
+                    <img
+                      src={photo}
+                      alt={name}
+                      onError={(e: any) => {
+                        e.currentTarget.src =
+                          'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80';
+                      }}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute top-3 left-3 rounded-lg border border-zinc-800/80 bg-zinc-950/85 px-2.5 py-1 text-[10px] font-bold tracking-wider text-amber-400 uppercase backdrop-blur-md">
+                      {type}
+                    </div>
+                    <div className="absolute right-3 bottom-3 flex items-center gap-1.5 rounded-lg bg-zinc-950/90 px-2.5 py-1 text-[11px] font-bold tracking-wider text-white uppercase backdrop-blur-sm">
+                      <LuUsers size={13} className="text-amber-400" />
+                      <span className="text-sm font-black text-amber-400">{capacity}</span> Seats
+                    </div>
                   </div>
-                </div>
-                <div className="flex flex-grow flex-col justify-between space-y-4 p-5">
-                  <div className="space-y-2">
-                    <h3 className="text-base font-bold text-zinc-900 transition-colors group-hover:text-amber-500 dark:text-white dark:group-hover:text-amber-400">
-                      {v.name}
-                    </h3>
-                    <p className="text-zinc-650 line-clamp-2 text-xs leading-relaxed font-light dark:text-zinc-400">
-                      {v.description}
-                    </p>
-                  </div>
-                  <div className="border-zinc-150 flex items-center justify-between border-t pt-4 text-xs text-zinc-500 dark:border-zinc-900">
-                    <span>
-                      Capacity:{' '}
-                      <strong className="text-zinc-700 dark:text-zinc-300">
-                        {v.capacity} Seats
-                      </strong>
-                    </span>
-                    <span className="flex gap-1.5">
-                      {((v as any).amenities || []).slice(0, 3).map((a: string, i: number) => (
-                        <span
-                          key={i}
-                          className="rounded border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 text-[10px] text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400"
+                  <div className="flex flex-grow flex-col justify-between space-y-4 p-5">
+                    <div className="space-y-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="text-base font-bold text-zinc-900 transition-colors group-hover:text-amber-500 dark:text-white dark:group-hover:text-amber-400">
+                          {name}
+                        </h3>
+                        {rate && (
+                          <span className="shrink-0 rounded bg-amber-400/10 px-2 py-0.5 text-xs font-bold text-amber-600 dark:text-amber-400">
+                            ₹{rate}/km
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-zinc-650 line-clamp-2 text-xs leading-relaxed font-light dark:text-zinc-400">
+                        {description}
+                      </p>
+                    </div>
+                    <div className="border-zinc-150 flex items-center justify-between border-t pt-4 text-xs text-zinc-500 dark:border-zinc-900">
+                      <div className="flex items-baseline gap-1 text-[11px]">
+                        <span>Capacity:</span>
+                        <strong className="text-sm font-black text-zinc-900 dark:text-amber-400">
+                          {capacity}
+                        </strong>
+                        <span className="text-[11px] font-medium text-zinc-600 dark:text-zinc-400">Seats</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="hidden flex-wrap gap-1 sm:flex">
+                          {amenitiesList.slice(0, 2).map((a: string, idx: number) => (
+                            <span
+                              key={idx}
+                              className="rounded border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 text-[9px] font-medium text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400"
+                            >
+                              {a}
+                            </span>
+                          ))}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleOpenInquiry({
+                              id: vehicleId,
+                              title: name,
+                              type: 'vehicle',
+                              capacity: capacity,
+                              price: rate ? `${rate}/km` : undefined,
+                              photo: photo,
+                            })
+                          }
+                          className="cursor-pointer rounded-lg bg-amber-400 px-3 py-1 text-xs font-bold text-zinc-950 shadow-sm transition-all hover:bg-amber-300"
                         >
-                          {a}
-                        </span>
-                      ))}
-                    </span>
+                          Enquire
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -438,6 +526,16 @@ export const Home = () => {
           ))}
         </div>
       </section>
+
+      {/* ── Booking Inquiry Modal ── */}
+      <InquiryModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedInquiryItem(null);
+        }}
+        item={selectedInquiryItem}
+      />
     </div>
   );
 };
