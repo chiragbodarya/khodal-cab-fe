@@ -59,7 +59,7 @@ export const Home = () => {
           </div>
           <h1 className="text-4xl leading-none font-black tracking-tight text-white sm:text-6xl">
             Travel in Luxury. <br />
-            Explore with <span className="text-amber-400">Khodel Travels</span>
+            Explore with <span className="text-amber-400">Khodal Cab</span>
           </h1>
           <p className="mx-auto max-w-2xl text-base leading-relaxed font-light text-zinc-200 sm:text-lg">
             Premium travel services with a world-class fleet of luxury buses, coaches, and

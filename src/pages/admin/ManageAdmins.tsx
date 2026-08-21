@@ -304,7 +304,7 @@ export const ManageAdmins = () => {
                 name="email"
                 type="email"
                 label="Email Address"
-                placeholder="e.g. rahul@khodeltravels.com"
+                placeholder="e.g. rahul@khodalcab.com"
                 icon={<LuMail size={15} />}
                 required
               />

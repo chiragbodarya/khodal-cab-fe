@@ -58,12 +58,12 @@ export const AdminSidebar = () => {
       >
         <img
           src="/favicon.png"
-          alt="Khodel Travels Logo"
+          alt="Khodal Cab Logo"
           className="h-9 w-9 flex-shrink-0 rounded-xl object-contain shadow-lg shadow-amber-400/20"
         />
         {!collapsed && (
           <span className="text-base font-bold tracking-tight text-white">
-            Khodel <span className="text-amber-400">Travels</span> Admin
+            Khodal <span className="text-amber-400">Cab</span> Admin
           </span>
         )}
       </div>

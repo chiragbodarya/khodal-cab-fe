@@ -68,7 +68,7 @@ export const AdminLogin = () => {
         <div className="flex flex-col items-center space-y-2">
           <img
             src="/favicon.png"
-            alt="Khodel Travels Logo"
+            alt="Khodal Cab Logo"
             className="h-12 w-12 rounded-2xl object-contain shadow-lg shadow-amber-500/20"
           />
           <h2 className="text-center text-xl font-bold text-white">Admin Management Console</h2>

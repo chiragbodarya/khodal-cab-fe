@@ -95,11 +95,11 @@ export const Sidebar = () => {
       >
         <img
           src="/favicon.png"
-          alt="Khodel Travels Logo"
+          alt="Khodal Cab Logo"
           className="h-9 w-9 flex-shrink-0 rounded-xl object-contain shadow-lg shadow-yellow-400/20"
         />
         {!collapsed && (
-          <span className="text-lg font-bold tracking-tight text-white">Khodel Travels</span>
+          <span className="text-lg font-bold tracking-tight text-white">Khodal Cab</span>
         )}
       </div>
 

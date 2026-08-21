@@ -90,7 +90,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     category: 'cab',
     photo:
       'https://images.unsplash.com/photo-1485291571150-772bcfc10da5?auto=format&fit=crop&w=800&q=80',
-    location: 'Khodel Cab Hub',
+    location: 'Khodal Cab Hub',
   },
 ];
 
@@ -116,7 +116,7 @@ const REVIEWS = [
     rating: 5,
     date: '3 weeks ago',
     comment:
-      'We used Khodel Travels for our family Kerala tour package. Houseboat stay, hotel bookings, and vehicle transfers were outstanding.',
+      'We used Khodal Cab for our family Kerala tour package. Houseboat stay, hotel bookings, and vehicle transfers were outstanding.',
     source: 'Google Review',
   },
   {
@@ -134,7 +134,7 @@ export const Gallery = () => {
   const rawItems = (liveGalleryData?.data as any[]) || [];
   const liveItems: GalleryItem[] = rawItems.map((item: any) => ({
     id: String(item.id || item._id),
-    title: item.title || item.caption || 'Khodel Showcase',
+    title: item.title || item.caption || 'Khodal Showcase',
     category: item.category || 'bus',
     photo: item.imageUrl || item.photo || '',
     location: item.location || '',

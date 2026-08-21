@@ -13,11 +13,11 @@ export const PublicFooter = () => {
             <Link to="/" className="flex items-center gap-2.5">
               <img
                 src="/favicon.png"
-                alt="Khodel Travels Logo"
+                alt="Khodal Cab Logo"
                 className="shadow-amber-550/10 h-8 w-8 rounded-lg object-contain shadow-md"
               />
               <span className="text-lg font-bold tracking-tight text-white">
-                Khodel<span className="text-amber-400">Travels</span>
+                Khodal <span className="text-amber-400">Cab</span>
               </span>
             </Link>
             <p className="text-xs leading-relaxed text-zinc-500">
@@ -156,7 +156,7 @@ export const PublicFooter = () => {
         {/* Bottom */}
         <div className="flex flex-col items-center justify-between gap-4 text-[11px] text-zinc-500 sm:flex-row">
           <div>
-            © {new Date().getFullYear()} Khodel Travels. All rights reserved. Built for travelers.
+            © {new Date().getFullYear()} Khodal Cab. All rights reserved. Built for travelers.
           </div>
         </div>
       </div>
