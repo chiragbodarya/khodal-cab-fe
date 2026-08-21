@@ -47,9 +47,9 @@ export const FormikTagsInput = ({
   return (
     <div className="space-y-2">
       {label && (
-        <label className="text-zinc-455 block text-sm font-semibold">
+        <label className="text-zinc-700 dark:text-zinc-300 block text-xs font-semibold">
           {label}
-          {required && <span className="ml-0.5 text-yellow-400">*</span>}
+          {required && <span className="ml-0.5 text-amber-500 dark:text-yellow-400">*</span>}
         </label>
       )}
       <div className="flex gap-2">
@@ -59,33 +59,33 @@ export const FormikTagsInput = ({
           onChange={e => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className={`flex-grow rounded-lg border bg-zinc-900 px-3.5 py-2.5 text-white transition-colors outline-none ${
+          className={`flex-grow rounded-xl border bg-zinc-50 dark:bg-zinc-900 px-3.5 py-2 text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 transition-colors outline-none focus:bg-white dark:focus:bg-zinc-900 ${
             hasError
               ? 'border-red-500 focus:border-red-500/50'
-              : 'border-zinc-700 focus:border-amber-400/50'
+              : 'border-zinc-200 dark:border-zinc-700 focus:border-amber-400'
           }`}
         />
         <button
           type="button"
           onClick={handleAddTag}
-          className="cursor-pointer rounded-lg bg-zinc-800 px-4 py-2 font-bold text-white transition-colors hover:bg-zinc-700"
+          className="cursor-pointer rounded-xl bg-zinc-100 dark:bg-zinc-800 px-4 py-2 text-xs font-bold text-zinc-700 dark:text-white transition-colors hover:bg-zinc-200 dark:hover:bg-zinc-700"
         >
           Add
         </button>
       </div>
-      {hasError && <p className="text-xs text-red-400">{meta.error as string}</p>}
-      <div className="flex flex-wrap gap-2 pt-1">
+      {hasError && <p className="text-xs text-red-500 dark:text-red-400">{meta.error as string}</p>}
+      <div className="flex flex-wrap gap-1.5 pt-1">
         {tags.map((item, idx) => (
           <span
             key={idx}
-            className="border-zinc-850 inline-flex items-center gap-1 rounded-lg border bg-zinc-950 px-2.5 py-1 text-[10px] font-semibold text-zinc-300"
+            className="inline-flex items-center gap-1 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-2.5 py-1 text-[10px] font-semibold text-zinc-700 dark:text-zinc-300"
           >
             {tagPrefix}
             {item}
             <button
               type="button"
               onClick={() => handleRemoveTag(idx)}
-              className="ml-1 cursor-pointer text-red-400 hover:text-red-300"
+              className="ml-1 cursor-pointer text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
             >
               ×
             </button>

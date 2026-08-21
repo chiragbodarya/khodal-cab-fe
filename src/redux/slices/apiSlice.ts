@@ -24,10 +24,17 @@ export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_URL,
     credentials: 'include', // Important for cookies (access token)
-    prepareHeaders: headers => {
+    prepareHeaders: (headers, { getState }) => {
+      // Get token from Redux state or localStorage fallback
+      const token =
+        (getState() as { auth?: { token?: string | null } })?.auth?.token ||
+        localStorage.getItem('tc_admin_token');
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
       return headers;
     },
   }),
-  tagTypes: ['Admin', 'TourPlan', 'CabPlan', 'Vehicle', 'Blog', 'Gallery', 'Inquiry'],
+  tagTypes: ['Admin', 'TourPlan', 'CabPlan', 'Vehicle', 'Blog', 'Gallery', 'Inquiry', 'Upload'],
   endpoints: () => ({}),
 });

@@ -1,13 +1,13 @@
 export const COMPANY_DETAILS = {
-  name: 'Khodel Travels',
+  name: 'Khodal Cab',
   slogan: 'ટ્રીપ તમારી કાર અમારી',
   sloganEnglish: 'Your Trip, Our Car',
   phoneCab: '+91 76008 48518',
   phoneTours: '+91 98765 43210',
-  emailInfo: 'info@khodeltravels.com',
-  emailSupport: 'support@khodeltravels.com',
-  address: '102 Khodel Arcade, Tourism Sector, City Center, India',
-  adminEmail: 'admin@khodeltravels.com',
+  emailInfo: 'info@khodalcab.com',
+  emailSupport: 'support@khodalcab.com',
+  address: '102 Khodal Arcade, Tourism Sector, City Center, India',
+  adminEmail: 'admin@khodalcab.com',
   adminPassword: 'admin123',
 };
 

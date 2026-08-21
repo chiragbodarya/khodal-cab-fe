@@ -6,7 +6,7 @@ import { useLoginMutation } from '../redux/slices/adminApiSlice';
 import { LuLock, LuMail, LuArrowLeft } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import { Formik, Form } from 'formik';
-import { FormikInput } from '../components/formik';
+import { FormikInput } from '../components/common/formik';
 
 export const AdminLogin = () => {
   const dispatch = useAppDispatch();
@@ -27,15 +27,19 @@ export const AdminLogin = () => {
         email: values.email,
         password: values.password,
       }).unwrap();
-      const { admin } = response.data;
+      const { admin, accessToken, refreshToken } = response.data;
 
       dispatch(
         loginAction({
-          id: admin.id,
-          name: admin.name || 'Admin',
-          email: admin.email,
-          role: 'admin',
-          avatar: admin.avatar || '',
+          user: {
+            id: admin.id,
+            name: admin.name || 'Admin',
+            email: admin.email,
+            role: 'admin',
+            avatar: admin.avatar || '',
+          },
+          token: accessToken,
+          refreshToken,
         })
       );
       toast.success('Login successful! Admin session started.');
@@ -64,7 +68,7 @@ export const AdminLogin = () => {
         <div className="flex flex-col items-center space-y-2">
           <img
             src="/favicon.png"
-            alt="Khodel Travels Logo"
+            alt="Khodal Cab Logo"
             className="h-12 w-12 rounded-2xl object-contain shadow-lg shadow-amber-500/20"
           />
           <h2 className="text-center text-xl font-bold text-white">Admin Management Console</h2>
@@ -75,7 +79,7 @@ export const AdminLogin = () => {
 
         {/* Login Form */}
         <Formik
-          initialValues={{ email: 'admin@khodeltravels.com', password: 'admin123' }}
+          initialValues={{ email: '', password: '' }}
           onSubmit={handleLogin}
         >
           {() => (
@@ -84,7 +88,7 @@ export const AdminLogin = () => {
                 name="email"
                 type="email"
                 label="Email Address"
-                placeholder="admin@khodeltravels.com"
+                placeholder="Enter your email"
                 icon={<LuMail size={16} />}
                 required
                 className="!bg-zinc-955 !rounded-xl !py-3.5"
@@ -99,13 +103,6 @@ export const AdminLogin = () => {
                 required
                 className="!bg-zinc-955 !rounded-xl !py-3.5"
               />
-
-              {/* Demo Credentials Alert */}
-              <div className="rounded-xl border border-amber-400/10 bg-amber-400/5 p-3.5 text-[11px] leading-relaxed font-light text-amber-300/80">
-                <strong>Demo Credentials:</strong> <br />
-                Email: <code className="text-white">admin@khodeltravels.com</code> <br />
-                Password: <code className="text-white">admin123</code>
-              </div>
 
               <button
                 type="submit"

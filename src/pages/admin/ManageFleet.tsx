@@ -1,20 +1,22 @@
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
+  useGetAdminVehiclesQuery,
   useGetVehiclesQuery,
   useCreateVehicleMutation,
   useUpdateVehicleMutation,
   useDeleteVehicleMutation,
 } from '../../redux/slices/vehicleApiSlice';
-import { LuPlus, LuTrash2, LuPen, LuUsers, LuX } from 'react-icons/lu';
+import { LuPlus, LuTrash2, LuPen, LuUsers } from 'react-icons/lu';
 import toast from 'react-hot-toast';
-import { useMemo, useCallback } from 'react';
 import { Formik, Form } from 'formik';
 import {
   FormikInput,
   FormikTextarea,
   FormikSelect,
   FormikTagsInput,
-} from '../../components/formik';
+} from '../../components/common/formik';
+import { ImageUploadField } from '../../components/common/ImageUploadField';
+import { AdminDrawer } from '../../components/common/AdminDrawer';
 import { Table } from '../../components/Table';
 import type { Column } from '../../components/Table';
 
@@ -38,62 +40,69 @@ const MOCK_PHOTO_PRESETS = [
 ];
 
 export const ManageFleet = () => {
-  const { data: vehicleData } = useGetVehiclesQuery({});
-  const vehicles = vehicleData?.data || [];
+  const { data: adminVehicleData, isError } = useGetAdminVehiclesQuery({});
+  const { data: publicVehicleData } = useGetVehiclesQuery(undefined, { skip: !isError });
+
+  const vehicles = (adminVehicleData?.data || publicVehicleData?.data || []) as any[];
   const [createVehicle] = useCreateVehicleMutation();
   const [updateVehicle] = useUpdateVehicleMutation();
   const [deleteVehicle] = useDeleteVehicleMutation();
-  const [showModal, setShowModal] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [editingVehicle, setEditingVehicle] = useState<any | null>(null);
 
-  const openAddModal = useCallback(() => {
+  const openAddDrawer = useCallback(() => {
     setEditingVehicle(null);
-    setShowModal(true);
+    setIsDrawerOpen(true);
   }, []);
 
-  const openEditModal = useCallback((vehicle: any) => {
+  const openEditDrawer = useCallback((vehicle: any) => {
     setEditingVehicle(vehicle);
-    setShowModal(true);
+    setIsDrawerOpen(true);
   }, []);
 
   const handleSubmit = async (values: any) => {
     const payload = {
       name: values.name,
       type: values.type,
-      capacity: values.capacity,
+      category: values.type || values.category,
+      capacity: Number(values.capacity),
+      seatCapacity: Number(values.capacity),
       description: values.description,
       photo: values.photo,
+      imageUrl: values.photo,
+      images: values.photo ? [values.photo] : [],
       amenities: values.amenities,
-      ratePerKm: values.ratePerKm,
+      features: values.amenities,
+      ratePerKm: Number(values.ratePerKm),
+      pricePerKm: Number(values.ratePerKm),
+      isActive: true,
     };
 
     try {
       if (editingVehicle) {
-        // Edit
         await updateVehicle({
-          id: editingVehicle.id || editingVehicle._id,
-          body: payload,
+          id: String(editingVehicle.id || editingVehicle._id),
+          body: payload as any,
         }).unwrap();
         toast.success('Vehicle updated successfully!');
       } else {
-        // Create new
-        await createVehicle(payload).unwrap();
+        await createVehicle(payload as any).unwrap();
         toast.success('New vehicle added to fleet!');
       }
-      setShowModal(false);
-    } catch (error) {
-      toast.error('Failed to save vehicle.');
+      setIsDrawerOpen(false);
+    } catch (error: any) {
+      toast.error(error?.data?.message || error?.message || 'Failed to save vehicle.');
     }
   };
 
   const handleDelete = useCallback(
-    async (id: string) => {
-      if (window.confirm('Are you sure you want to remove this vehicle from the fleet?')) {
+    async (id: string | number) => {
+      if (window.confirm('Are you sure you want to remove this vehicle?')) {
         try {
-          await deleteVehicle(id).unwrap();
+          await deleteVehicle(String(id)).unwrap();
           toast.success('Vehicle deleted successfully.');
-        } catch (error) {
-          toast.error('Failed to delete vehicle.');
+        } catch (error: any) {
+          toast.error(error?.data?.message || error?.message || 'Failed to delete vehicle.');
         }
       }
     },
@@ -104,20 +113,35 @@ export const ManageFleet = () => {
     () => [
       {
         header: 'Photo',
-        render: (v: any) => (
-          <img
-            src={v.photo || 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957'}
-            alt={v.name}
-            className="h-10 w-16 rounded border border-zinc-800 object-cover"
-          />
-        ),
+        render: (v: any) => {
+          const photoUrl =
+            v.photo ||
+            v.imageUrl ||
+            v.image ||
+            v.coverImage ||
+            (Array.isArray(v.images) ? v.images[0] : v.images) ||
+            'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957';
+          return (
+            <img
+              src={photoUrl}
+              alt={v.name || 'Vehicle'}
+              onError={(e: any) => {
+                e.currentTarget.src =
+                  'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80';
+              }}
+              className="h-10 w-16 rounded border border-zinc-800 object-cover"
+            />
+          );
+        },
       },
       {
         header: 'Vehicle Details',
         render: (v: any) => (
           <div className="max-w-xs space-y-1">
-            <div className="truncate leading-tight font-bold text-white">{v.name}</div>
-            <div className="truncate text-[10px] text-zinc-400">{v.description}</div>
+            <div className="truncate leading-tight font-bold text-white">{v.name || 'Vehicle'}</div>
+            <div className="truncate text-[10px] text-zinc-400">
+              {v.description || v.desc || 'No description provided'}
+            </div>
           </div>
         ),
       },
@@ -126,33 +150,45 @@ export const ManageFleet = () => {
         render: (v: any) => (
           <div className="space-y-0.5 text-xs text-zinc-400">
             <div className="flex items-center gap-1 text-[10px] font-semibold text-amber-400 uppercase">
-              {v.type}
+              {v.type || v.category || 'Bus'}
             </div>
-            <div className="flex items-center gap-1">
-              <LuUsers size={10} /> {v.capacity} Seater
+            <div className="flex items-center gap-1 text-xs">
+              <LuUsers size={12} className="text-amber-400" />{' '}
+              <span className="text-sm font-bold text-white">
+                {v.capacity || v.seatCapacity || v.seats || 4}
+              </span>{' '}
+              <span className="text-zinc-400">Seater</span>
             </div>
           </div>
         ),
       },
       {
-        header: 'Amenities',
-        render: (v: any) => (
-          <div className="flex max-w-[150px] flex-wrap gap-1">
-            {(v.amenities || []).map((item: string, idx: number) => (
-              <span
-                key={idx}
-                className="text-zinc-350 rounded border border-zinc-800 bg-zinc-950 px-1.5 py-0.5 text-[9px] font-medium"
-              >
-                {item}
-              </span>
-            ))}
-          </div>
-        ),
+        header: 'Amenities / Features',
+        render: (v: any) => {
+          let list = v.amenities || v.features || [];
+          if (typeof list === 'string') {
+            list = list.split(',').map((s: string) => s.trim()).filter(Boolean);
+          }
+          return (
+            <div className="flex max-w-[150px] flex-wrap gap-1">
+              {(list || []).map((item: string, idx: number) => (
+                <span
+                  key={idx}
+                  className="rounded border border-zinc-800 bg-zinc-950 px-1.5 py-0.5 text-[9px] font-medium text-zinc-300"
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
+          );
+        },
       },
       {
         header: 'Rate',
         render: (v: any) => (
-          <div className="text-xs font-bold text-white">₹{v.ratePerKm || 40}/km</div>
+          <div className="text-xs font-bold text-white">
+            ₹{v.ratePerKm || v.pricePerKm || v.rate || v.price || 40}/km
+          </div>
         ),
       },
       {
@@ -160,15 +196,15 @@ export const ManageFleet = () => {
         render: (v: any) => (
           <div className="flex items-center gap-2">
             <button
-              onClick={() => openEditModal(v)}
-              className="bg-zinc-850 cursor-pointer rounded border border-zinc-800 p-1.5 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
+              onClick={() => openEditDrawer(v)}
+              className="cursor-pointer rounded border border-zinc-800 bg-zinc-900 p-1.5 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
               title="Edit"
             >
               <LuPen size={13} />
             </button>
             <button
               onClick={() => handleDelete(v.id || v._id)}
-              className="bg-zinc-850 text-zinc-450 cursor-pointer rounded border border-zinc-800 p-1.5 transition-colors hover:bg-red-500/15 hover:text-red-400"
+              className="cursor-pointer rounded border border-zinc-800 bg-zinc-900 p-1.5 text-zinc-400 transition-colors hover:bg-red-500/15 hover:text-red-400"
               title="Delete"
             >
               <LuTrash2 size={13} />
@@ -177,7 +213,7 @@ export const ManageFleet = () => {
         ),
       },
     ],
-    [openEditModal, handleDelete]
+    [openEditDrawer, handleDelete]
   );
 
   return (
@@ -185,13 +221,13 @@ export const ManageFleet = () => {
       {/* Header */}
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-2xl font-black text-white">Fleet Management</h1>
+          <h1 className="text-2xl font-black text-white">Vehicle Management</h1>
           <p className="mt-1 text-xs text-zinc-400">
-            Create, update, and manage transport buses, vans, and coaches.
+            Create, update, and manage buses, vans, cars, and coaches.
           </p>
         </div>
         <button
-          onClick={openAddModal}
+          onClick={openAddDrawer}
           className="flex cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-amber-400 px-4 py-2.5 text-xs font-bold text-zinc-950 shadow-lg shadow-amber-400/10 transition-colors hover:bg-amber-300"
         >
           <LuPlus size={16} /> Add New Vehicle
@@ -200,159 +236,130 @@ export const ManageFleet = () => {
 
       <Table
         data={vehicles}
-        keyFn={(row: any) => row.id || row._id}
-        emptyMessage="No vehicles listed. Click 'Add New Vehicle' to seed your fleet."
+        keyFn={(row: any) => String(row.id || row._id)}
+        emptyMessage="No vehicles listed. Click 'Add New Vehicle' to add vehicles."
         columns={fleetColumns}
       />
 
-      {/* ── Add / Edit Vehicle Modal ── */}
-      {showModal && (
-        <div className="animate-in fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 p-4 backdrop-blur-sm">
-          <div className="relative flex max-h-[90vh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-zinc-800/80 px-6 py-4">
-              <h3 className="text-base font-bold text-white">
-                {editingVehicle ? 'Edit Vehicle Details' : 'Add Vehicle to Fleet'}
-              </h3>
-              <button
-                onClick={() => setShowModal(false)}
-                className="cursor-pointer rounded bg-zinc-800 p-1 text-zinc-400 hover:bg-zinc-700 hover:text-white"
-              >
-                <LuX size={18} />
-              </button>
-            </div>
-
-            <Formik
-              initialValues={
-                editingVehicle
-                  ? {
-                      name: editingVehicle.name,
-                      type: editingVehicle.type,
-                      capacity: editingVehicle.capacity,
-                      description: editingVehicle.description,
-                      photo: editingVehicle.photo,
-                      amenities: editingVehicle.amenities || [],
-                      ratePerKm: editingVehicle.ratePerKm || 40,
-                    }
-                  : {
-                      name: '',
-                      type: 'bus',
-                      capacity: 36,
-                      description: '',
-                      photo: MOCK_PHOTO_PRESETS[0].url,
-                      amenities: ['AC', 'Wi-Fi', 'GPS'],
-                      ratePerKm: 40,
-                    }
+      {/* ── Add / Edit Vehicle Drawer ── */}
+      <AdminDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        title={editingVehicle ? 'Edit Vehicle Details' : 'Add New Vehicle'}
+        subtitle={editingVehicle ? 'Modify specs, pricing, and features' : 'Enter specs and upload vehicle images'}
+        maxWidth="max-w-xl"
+      >
+        <Formik
+          initialValues={
+            editingVehicle
+              ? {
+                name: editingVehicle.name || '',
+                type: editingVehicle.type || editingVehicle.category || 'bus',
+                capacity: editingVehicle.capacity || editingVehicle.seatCapacity || '',
+                description: editingVehicle.description || '',
+                photo: editingVehicle.photo || editingVehicle.imageUrl || editingVehicle.image || editingVehicle.coverImage || (Array.isArray(editingVehicle.images) ? editingVehicle.images[0] : (typeof editingVehicle.images === 'string' ? editingVehicle.images : '')) || '',
+                amenities: editingVehicle.amenities || editingVehicle.features || [],
+                ratePerKm: editingVehicle.ratePerKm || editingVehicle.pricePerKm || '',
               }
-              onSubmit={handleSubmit}
-            >
-              {({ values, setFieldValue }) => (
-                <Form className="flex-grow space-y-4 overflow-y-auto p-6 text-xs text-zinc-300">
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <FormikInput
-                      name="name"
-                      label="Vehicle Name"
-                      placeholder="Volvo 9600 Multi-Axle"
-                      required
-                    />
+              : {
+                name: '',
+                type: 'bus',
+                capacity: '',
+                description: '',
+                photo: '',
+                amenities: [],
+                ratePerKm: '',
+              }
+          }
+          onSubmit={handleSubmit}
+          enableReinitialize
+        >
+          {({ values, setFieldValue }) => (
+            <Form className="space-y-5 text-xs text-zinc-300">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <FormikInput
+                  name="name"
+                  label="Vehicle Name"
+                  placeholder="Volvo 9600 Multi-Axle"
+                  required
+                />
 
-                    <FormikSelect
-                      name="type"
-                      label="Vehicle Type"
-                      options={[
-                        { label: 'Bus', value: 'bus' },
-                        { label: 'Coach', value: 'coach' },
-                        { label: 'Luxury Mini Van', value: 'van' },
-                        { label: 'Executive Car', value: 'car' },
-                      ]}
-                      required
-                    />
-                  </div>
+                <FormikSelect
+                  name="type"
+                  label="Vehicle Type / Category"
+                  options={[
+                    { label: 'Bus', value: 'bus' },
+                    { label: 'Coach', value: 'coach' },
+                    { label: 'Luxury Mini Van', value: 'van' },
+                    { label: 'Executive Car / Sedan', value: 'car' },
+                    { label: 'SUV', value: 'SUV' },
+                  ]}
+                  required
+                />
+              </div>
 
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <FormikInput
-                      name="capacity"
-                      type="number"
-                      label="Seat Capacity"
-                      min={1}
-                      required
-                    />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <FormikInput
+                  name="capacity"
+                  type="number"
+                  label="Seat Capacity"
+                  placeholder="e.g. 36 or 7"
+                  min={1}
+                  required
+                />
 
-                    <FormikInput
-                      name="ratePerKm"
-                      type="number"
-                      label="Rate Per KM (INR)"
-                      min={1}
-                      required
-                    />
-                  </div>
+                <FormikInput
+                  name="ratePerKm"
+                  type="number"
+                  label="Rate Per KM (INR)"
+                  placeholder="e.g. 45"
+                  min={1}
+                  required
+                />
+              </div>
 
-                  {/* Photo Input & Presets */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-zinc-450 block text-sm font-semibold">
-                        Vehicle Image URL *
-                      </span>
-                      <span className="text-[10px] text-amber-400">Or pick a preset below</span>
-                    </div>
-                    <FormikInput
-                      name="photo"
-                      placeholder="https://images.unsplash.com/..."
-                      required
-                    />
-                    {/* Presets Row */}
-                    <div className="flex gap-2 overflow-x-auto py-1">
-                      {MOCK_PHOTO_PRESETS.map((preset, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => setFieldValue('photo', preset.url)}
-                          className={`bg-zinc-850 cursor-pointer rounded border px-3 py-1 text-[10px] font-semibold hover:bg-zinc-800 ${
-                            values.photo === preset.url
-                              ? 'border-amber-400 text-amber-400'
-                              : 'border-zinc-800 text-zinc-400'
-                          }`}
-                        >
-                          {preset.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+              {/* Enhanced Image Upload Field */}
+              <ImageUploadField
+                name="photo"
+                label="Vehicle Photo"
+                value={values.photo}
+                onChange={url => setFieldValue('photo', url)}
+                presets={MOCK_PHOTO_PRESETS}
+                required
+              />
 
-                  <FormikTagsInput
-                    name="amenities"
-                    label="Vehicle Amenities"
-                    placeholder="e.g. Wi-Fi, Charger, Toilet"
-                  />
+              <FormikTagsInput
+                name="amenities"
+                label="Vehicle Amenities & Features"
+                placeholder="e.g. Wi-Fi, Charger, Toilet, Pushback Seats"
+              />
 
-                  <FormikTextarea
-                    name="description"
-                    label="Short Description"
-                    rows={3}
-                    placeholder="Describe comfort features, safety, or routes this vehicle works on..."
-                    required
-                  />
+              <FormikTextarea
+                name="description"
+                label="Short Description"
+                rows={3}
+                placeholder="Describe comfort features, safety, or routes this vehicle works on..."
+              />
 
-                  <div className="flex items-center justify-end gap-3 border-t border-zinc-800/80 pt-4">
-                    <button
-                      type="button"
-                      onClick={() => setShowModal(false)}
-                      className="cursor-pointer rounded-xl border border-zinc-800 px-4 py-2 font-semibold hover:bg-zinc-800"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="cursor-pointer rounded-xl bg-amber-400 px-5 py-2 font-bold text-zinc-950 hover:bg-amber-300"
-                    >
-                      {editingVehicle ? 'Save Changes' : 'Create Vehicle'}
-                    </button>
-                  </div>
-                </Form>
-              )}
-            </Formik>
-          </div>
-        </div>
-      )}
+              <div className="flex items-center justify-end gap-3 border-t border-zinc-800/80 pt-5">
+                <button
+                  type="button"
+                  onClick={() => setIsDrawerOpen(false)}
+                  className="cursor-pointer rounded-xl border border-zinc-800 px-4 py-2.5 font-semibold text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="cursor-pointer rounded-xl bg-amber-400 px-5 py-2.5 font-bold text-zinc-950 shadow-lg shadow-amber-400/10 hover:bg-amber-300"
+                >
+                  {editingVehicle ? 'Save Changes' : 'Create Vehicle'}
+                </button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </AdminDrawer>
     </div>
   );
 };

@@ -44,11 +44,11 @@ export const PublicHeader = () => {
           <Link to="/" className="group flex items-center gap-2.5">
             <img
               src="/favicon.png"
-              alt="Khodel Travels Logo"
+              alt="Khodal Cab Logo"
               className="shadow-amber-555/10 h-10 w-10 rounded-xl object-contain shadow-lg transition-transform group-hover:scale-105"
             />
             <span className="text-xl font-bold tracking-tight text-zinc-900 transition-colors dark:text-white">
-              Khodel <span className="text-amber-400">Travels</span>
+              Khodal <span className="text-amber-400">Cab</span>
             </span>
           </Link>
 

@@ -48,16 +48,16 @@ export const adminApi = apiSlice.injectEndpoints({
       query: () => '/admin/me',
       providesTags: ['Admin'],
     }),
-    getAdmins: builder.query<PaginatedResponse<Admin>, { page?: number; limit?: number }>({
+    getAdmins: builder.query<PaginatedResponse<Admin>, { page?: number; limit?: number } | void>({
       query: params => ({
-        url: '/admin/',
-        params,
+        url: '/admin',
+        params: params || undefined,
       }),
       providesTags: ['Admin'],
     }),
     createAdmin: builder.mutation<SingleResponse<Admin>, Record<string, unknown>>({
       query: body => ({
-        url: '/admin/',
+        url: '/admin',
         method: 'POST',
         body,
       }),
@@ -65,7 +65,7 @@ export const adminApi = apiSlice.injectEndpoints({
     }),
     changePassword: builder.mutation<
       unknown,
-      { id: string; currentPassword: string; newPassword: string }
+      { id: string; currentPassword?: string; newPassword: string }
     >({
       query: ({ id, ...body }) => ({
         url: `/admin/${id}/password`,

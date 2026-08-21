@@ -8,9 +8,13 @@ import { Contact } from '../pages/Contact';
 import { Gallery } from '../pages/Gallery';
 import { AdminLogin } from '../pages/AdminLogin';
 import { Dashboard as AdminDashboard } from '../pages/admin/Dashboard';
+import { ManageInquiries } from '../pages/admin/ManageInquiries';
 import { ManageFleet } from '../pages/admin/ManageFleet';
-import { ManagePlans } from '../pages/admin/ManagePlans';
+import { ManageTours } from '../pages/admin/ManageTours';
+import { ManageCabs } from '../pages/admin/ManageCabs';
 import { ManageBlogs } from '../pages/admin/ManageBlogs';
+import { ManageGallery } from '../pages/admin/ManageGallery';
+import { ManageAdmins } from '../pages/admin/ManageAdmins';
 import { NotFound } from '../pages/NotFound';
 
 export const router = createBrowserRouter([
@@ -55,16 +59,36 @@ export const router = createBrowserRouter([
         element: <AdminDashboard />,
       },
       {
+        path: '/backstage/inquiries',
+        element: <ManageInquiries />,
+      },
+      {
         path: '/backstage/fleet',
         element: <ManageFleet />,
       },
       {
+        path: '/backstage/tours',
+        element: <ManageTours />,
+      },
+      {
+        path: '/backstage/cabs',
+        element: <ManageCabs />,
+      },
+      {
         path: '/backstage/plans',
-        element: <ManagePlans />,
+        element: <ManageTours />,
       },
       {
         path: '/backstage/blogs',
         element: <ManageBlogs />,
+      },
+      {
+        path: '/backstage/gallery',
+        element: <ManageGallery />,
+      },
+      {
+        path: '/backstage/admins',
+        element: <ManageAdmins />,
       },
     ],
   },

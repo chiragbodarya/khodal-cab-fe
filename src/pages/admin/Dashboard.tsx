@@ -1,12 +1,26 @@
 import {
-  useGetInquiriesQuery,
-  useUpdateInquiryStatusMutation,
-  useDeleteInquiryMutation,
+  useGetAdminInquiriesQuery,
+  useGetAdminInquiryStatsQuery,
+  useUpdateAdminInquiryMutation,
+  useDeleteAdminInquiryMutation,
 } from '../../redux/slices/inquiryApiSlice';
 import { useGetAdminTourPlansQuery } from '../../redux/slices/tourApiSlice';
-import { useGetVehiclesQuery } from '../../redux/slices/vehicleApiSlice';
-import { useGetBlogsQuery } from '../../redux/slices/blogApiSlice';
-import { LuBus, LuMapPin, LuFileText, LuCheck, LuTrash2, LuInbox } from 'react-icons/lu';
+import { useGetAdminCabPlansQuery } from '../../redux/slices/cabApiSlice';
+import { useGetAdminVehiclesQuery } from '../../redux/slices/vehicleApiSlice';
+import { useGetAdminBlogsQuery } from '../../redux/slices/blogApiSlice';
+import { useGetGalleryQuery } from '../../redux/slices/galleryApiSlice';
+import {
+  LuBus,
+  LuMapPin,
+  LuFileText,
+  LuCheck,
+  LuTrash2,
+  LuInbox,
+  LuCar,
+  LuPhone,
+  LuCalendar,
+  LuUsers,
+} from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import { useMemo } from 'react';
 import { Table } from '../../components/Table';
@@ -14,38 +28,71 @@ import type { Column } from '../../components/Table';
 
 export const Dashboard = () => {
   const { data: tourData } = useGetAdminTourPlansQuery({});
-  const { data: fleetData } = useGetVehiclesQuery({});
-  const { data: blogData } = useGetBlogsQuery({});
-  const { data: inqData } = useGetInquiriesQuery({});
-  const [updateStatus] = useUpdateInquiryStatusMutation();
-  const [deleteInquiry] = useDeleteInquiryMutation();
+  const { data: cabData } = useGetAdminCabPlansQuery({});
+  const { data: fleetData } = useGetAdminVehiclesQuery({});
+  const { data: blogData } = useGetAdminBlogsQuery({});
+  const { data: galleryData } = useGetGalleryQuery({});
+  const { data: inqData } = useGetAdminInquiriesQuery({});
+  const { data: statsData } = useGetAdminInquiryStatsQuery();
+  const [updateInquiry] = useUpdateAdminInquiryMutation();
+  const [deleteInquiry] = useDeleteAdminInquiryMutation();
 
-  const inquiries = inqData?.data || [];
+  const inquiries = (inqData?.data || []) as any[];
+  const inqStats = statsData?.data;
+
   const stats = {
-    plansCount: tourData?.meta?.total || tourData?.data?.length || 0,
+    toursCount: tourData?.meta?.total || tourData?.data?.length || 0,
+    cabsCount: cabData?.meta?.total || cabData?.data?.length || 0,
     fleetCount: fleetData?.meta?.total || fleetData?.data?.length || 0,
     blogsCount: blogData?.meta?.total || blogData?.data?.length || 0,
-    inqCount: inquiries.filter((i: any) => i.status === 'pending').length,
+    galleryCount: galleryData?.meta?.total || galleryData?.data?.length || 0,
+    inqCount:
+      inqStats?.newInquiries ??
+      inquiries.filter((i: any) => i.status === 'NEW' || i.status === 'pending').length,
+    totalInquiries: inqStats?.total ?? inquiries.length,
   };
 
-  const handleToggleStatus = async (inq: any) => {
+  const handleUpdateStatus = async (inq: any, newStatus: string) => {
     try {
-      const newStatus = inq.status === 'pending' ? 'responded' : 'pending';
-      await updateStatus({ id: inq.id || inq._id, status: newStatus as any }).unwrap();
-      toast.success('Inquiry status updated successfully!');
-    } catch (error) {
-      toast.error('Failed to update status.');
+      await updateInquiry({
+        id: inq.id || inq._id,
+        body: { status: newStatus as any, isWorkedOn: true },
+      }).unwrap();
+      toast.success(`Inquiry status updated to ${newStatus}`);
+    } catch (error: any) {
+      toast.error(error?.data?.message || error?.message || 'Failed to update status.');
     }
   };
 
-  const handleDeleteInquiry = async (id: string) => {
+  const handleDeleteInquiry = async (id: string | number) => {
     if (window.confirm('Are you sure you want to delete this inquiry?')) {
       try {
         await deleteInquiry(id).unwrap();
         toast.success('Inquiry deleted successfully!');
-      } catch (error) {
-        toast.error('Failed to delete inquiry.');
+      } catch (error: any) {
+        toast.error(error?.data?.message || error?.message || 'Failed to delete inquiry.');
       }
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'NEW':
+      case 'pending':
+        return 'border-amber-400/30 bg-amber-400/10 text-amber-400';
+      case 'IN_PROGRESS':
+        return 'border-sky-400/30 bg-sky-400/10 text-sky-400';
+      case 'CALL_BACK_REQUESTED':
+        return 'border-purple-400/30 bg-purple-400/10 text-purple-400';
+      case 'CONFIRMED':
+      case 'responded':
+        return 'border-emerald-400/30 bg-emerald-400/10 text-emerald-400';
+      case 'RESOLVED':
+        return 'border-zinc-500/30 bg-zinc-500/10 text-zinc-300';
+      case 'CANCELLED':
+        return 'border-rose-400/30 bg-rose-400/10 text-rose-400';
+      default:
+        return 'border-zinc-700 bg-zinc-800 text-zinc-400';
     }
   };
 
@@ -54,46 +101,98 @@ export const Dashboard = () => {
       {
         header: 'Customer',
         render: (inq: any) => (
-          <>
+          <div className="space-y-0.5">
             <div className="font-semibold text-white">{inq.name}</div>
-            <div className="text-[10px] text-zinc-500">
-              {inq.email} | {inq.phone}
+            <div className="flex items-center gap-1 text-[11px] text-zinc-400">
+              <LuPhone size={10} className="text-amber-400" />
+              <span>{inq.phone}</span>
             </div>
-          </>
+            {inq.email && <div className="text-[10px] text-zinc-500">{inq.email}</div>}
+          </div>
         ),
       },
       {
-        header: 'Requested Tour',
-        render: (inq: any) => <span className="font-medium text-zinc-300">{inq.planTitle}</span>,
+        header: 'Type & Service',
+        render: (inq: any) => {
+          const type = inq.type || 'CONTACT_US';
+          const title =
+            inq.vehicle?.name ||
+            inq.tourPlan?.title ||
+            inq.cabPlan?.title ||
+            inq.planTitle ||
+            'General Contact';
+          return (
+            <div className="space-y-1">
+              <span className="inline-block rounded border border-amber-400/20 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-bold text-amber-400 uppercase">
+                {type.replace('_', ' ')}
+              </span>
+              <div className="text-xs font-semibold text-zinc-200">{title}</div>
+            </div>
+          );
+        },
       },
       {
-        header: 'Date',
+        header: 'Route & Details',
         render: (inq: any) => (
-          <span className="text-zinc-450">
-            {inq.createdAt ? new Date(inq.createdAt).toLocaleDateString() : inq.date}
-          </span>
+          <div className="space-y-0.5 text-xs text-zinc-300">
+            {(inq.pickupLocation || inq.dropLocation) && (
+              <div className="flex items-center gap-1 text-[11px] text-amber-400">
+                <LuMapPin size={11} />
+                <span>
+                  {inq.pickupLocation || 'Origin'} → {inq.dropLocation || 'Destination'}
+                </span>
+              </div>
+            )}
+            {inq.travelDate && (
+              <div className="flex items-center gap-1 text-[10px] text-zinc-400">
+                <LuCalendar size={10} />
+                <span>Travel: {new Date(inq.travelDate).toLocaleDateString()}</span>
+              </div>
+            )}
+            {inq.passengers && (
+              <div className="flex items-center gap-1 text-[10px] text-zinc-400">
+                <LuUsers size={10} />
+                <span>{inq.passengers} Passengers</span>
+              </div>
+            )}
+            {!inq.pickupLocation && !inq.travelDate && !inq.passengers && (
+              <span className="text-[10px] text-zinc-500">—</span>
+            )}
+          </div>
         ),
       },
       {
-        header: 'Message',
+        header: 'Message / Notes',
         render: (inq: any) => (
-          <div className="max-w-xs truncate" title={inq.message}>
-            {inq.message || '—'}
+          <div className="max-w-xs space-y-1">
+            <p className="line-clamp-2 text-xs text-zinc-400" title={inq.message}>
+              {inq.message || '—'}
+            </p>
+            {inq.adminNotes && (
+              <p className="text-[10px] text-amber-400/90 italic" title={inq.adminNotes}>
+                Note: {inq.adminNotes}
+              </p>
+            )}
           </div>
         ),
       },
       {
         header: 'Status',
         render: (inq: any) => (
-          <span
-            className={`inline-flex rounded px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase ${
-              inq.status === 'pending'
-                ? 'border border-amber-400/20 bg-amber-400/10 text-amber-400'
-                : 'bg-emerald-450/10 border border-emerald-400/20 text-emerald-400'
-            }`}
+          <select
+            value={inq.status || 'NEW'}
+            onChange={e => handleUpdateStatus(inq, e.target.value)}
+            className={`cursor-pointer rounded-lg border px-2 py-1 text-[10px] font-bold tracking-wider uppercase transition-colors outline-none ${getStatusBadge(
+              inq.status
+            )}`}
           >
-            {inq.status}
-          </span>
+            <option value="NEW" className="bg-zinc-900 text-white">NEW</option>
+            <option value="IN_PROGRESS" className="bg-zinc-900 text-white">IN PROGRESS</option>
+            <option value="CALL_BACK_REQUESTED" className="bg-zinc-900 text-white">CALL BACK</option>
+            <option value="CONFIRMED" className="bg-zinc-900 text-white">CONFIRMED</option>
+            <option value="RESOLVED" className="bg-zinc-900 text-white">RESOLVED</option>
+            <option value="CANCELLED" className="bg-zinc-900 text-white">CANCELLED</option>
+          </select>
         ),
       },
       {
@@ -101,19 +200,20 @@ export const Dashboard = () => {
         render: (inq: any) => (
           <div className="flex items-center gap-2">
             <button
-              onClick={() => handleToggleStatus(inq)}
-              className={`cursor-pointer rounded p-1.5 transition-colors ${
-                inq.status === 'pending'
-                  ? 'bg-zinc-850 border border-zinc-800 text-zinc-400 hover:bg-emerald-500/15 hover:text-emerald-400'
-                  : 'bg-zinc-850 text-zinc-450 border border-zinc-800 hover:bg-amber-500/15 hover:text-amber-400'
-              }`}
-              title={inq.status === 'pending' ? 'Mark Responded' : 'Mark Pending'}
+              onClick={() =>
+                handleUpdateStatus(
+                  inq,
+                  inq.status === 'CONFIRMED' || inq.status === 'RESOLVED' ? 'NEW' : 'CONFIRMED'
+                )
+              }
+              className="cursor-pointer rounded border border-zinc-800 bg-zinc-900 p-1.5 text-zinc-400 transition-colors hover:bg-emerald-500/15 hover:text-emerald-400"
+              title="Quick Confirm"
             >
               <LuCheck size={14} />
             </button>
             <button
               onClick={() => handleDeleteInquiry(inq.id || inq._id)}
-              className="bg-zinc-850 cursor-pointer rounded border border-zinc-800 p-1.5 text-zinc-400 hover:bg-red-500/15 hover:text-red-400"
+              className="cursor-pointer rounded border border-zinc-800 bg-zinc-900 p-1.5 text-zinc-400 transition-colors hover:bg-red-500/15 hover:text-red-400"
               title="Delete"
             >
               <LuTrash2 size={14} />
@@ -122,7 +222,7 @@ export const Dashboard = () => {
         ),
       },
     ],
-    [handleToggleStatus, handleDeleteInquiry]
+    [handleUpdateStatus, handleDeleteInquiry]
   );
 
   return (
@@ -136,13 +236,13 @@ export const Dashboard = () => {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
         <div className="flex items-center justify-between rounded-2xl border border-zinc-800/80 bg-zinc-900 p-5">
           <div className="space-y-1">
             <span className="block text-[10px] font-bold tracking-wider text-zinc-500 uppercase">
-              Pending Inquiries
+              Inquiries
             </span>
-            <span className="text-2xl font-black text-white">{stats.inqCount}</span>
+            <span className="text-2xl font-black text-white">{stats.inqCount} Pending</span>
           </div>
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400">
             <LuInbox size={20} />
@@ -152,7 +252,7 @@ export const Dashboard = () => {
         <div className="flex items-center justify-between rounded-2xl border border-zinc-800/80 bg-zinc-900 p-5">
           <div className="space-y-1">
             <span className="block text-[10px] font-bold tracking-wider text-zinc-500 uppercase">
-              Total Fleet
+              Total Vehicles
             </span>
             <span className="text-2xl font-black text-white">{stats.fleetCount} Vehicles</span>
           </div>
@@ -164,9 +264,9 @@ export const Dashboard = () => {
         <div className="flex items-center justify-between rounded-2xl border border-zinc-800/80 bg-zinc-900 p-5">
           <div className="space-y-1">
             <span className="block text-[10px] font-bold tracking-wider text-zinc-500 uppercase">
-              Destinations
+              Tour Packages
             </span>
-            <span className="text-2xl font-black text-white">{stats.plansCount} Packages</span>
+            <span className="text-2xl font-black text-white">{stats.toursCount} Tours</span>
           </div>
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400">
             <LuMapPin size={20} />
@@ -176,7 +276,19 @@ export const Dashboard = () => {
         <div className="flex items-center justify-between rounded-2xl border border-zinc-800/80 bg-zinc-900 p-5">
           <div className="space-y-1">
             <span className="block text-[10px] font-bold tracking-wider text-zinc-500 uppercase">
-              SEO Articles
+              Cab Plans
+            </span>
+            <span className="text-2xl font-black text-white">{stats.cabsCount} Routes</span>
+          </div>
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400">
+            <LuCar size={20} />
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between rounded-2xl border border-zinc-800/80 bg-zinc-900 p-5">
+          <div className="space-y-1">
+            <span className="block text-[10px] font-bold tracking-wider text-zinc-500 uppercase">
+              SEO Blogs
             </span>
             <span className="text-2xl font-black text-white">{stats.blogsCount} Posts</span>
           </div>
@@ -199,7 +311,7 @@ export const Dashboard = () => {
 
         <Table
           data={inquiries}
-          keyFn={(row: any) => row.id || row._id}
+          keyFn={(row: any) => String(row.id || row._id)}
           emptyMessage="No customer inquiries found."
           columns={dashboardColumns}
         />
